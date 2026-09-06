@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="ogBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090d0b"/>
+      <stop offset="50%" stop-color="#040605"/>
+      <stop offset="100%" stop-color="#020302"/>
+    </linearGradient>
+    <linearGradient id="brandEmeraldOG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="50%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <radialGradient id="ambientGlow" cx="30%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#090d0b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#ogBg)"/>
+  <rect width="1200" height="630" fill="url(#ambientGlow)"/>
+
+  <!-- Border accent -->
+  <rect x="20" y="20" width="1160" height="590" rx="32" fill="none" stroke="#10b981" stroke-width="2" stroke-opacity="0.2"/>
+
+  <!-- Left Icon Mark -->
+  <g transform="translate(100, 165) scale(0.38)">
+    <rect width="800" height="800" rx="200" fill="#0e1713" stroke="#10b981" stroke-width="12" stroke-opacity="0.4"/>
+    <path d="M 590 190 L 320 190 C 240 190 180 250 180 330 C 180 400 230 455 300 475 L 510 535 C 570 552 610 595 610 650 C 610 715 555 765 470 765 L 200 765 L 200 650 L 470 650 C 500 650 520 635 520 615 C 520 592 500 575 465 565 L 260 505 C 190 485 140 430 140 350 C 140 240 230 150 350 150 L 630 150 Z" fill="url(#brandEmeraldOG)"/>
+    <path d="M 620 100 L 690 210 L 610 210 L 650 320 L 530 230 L 600 230 Z" fill="#6ee7b7"/>
+    <circle cx="330" cy="300" r="34" fill="#090d0b" stroke="#34d399" stroke-width="12"/>
+  </g>
+
+  <!-- Brand Typography -->
+  <!-- Name -->
+  <text x="460" y="275" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="900" font-size="124" fill="#ffffff" letter-spacing="3">
+    SNAG<tspan fill="url(#brandEmeraldOG)">Z</tspan>
+  </text>
+
+  <!-- Official Tagline -->
+  <text x="465" y="345" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="700" font-size="34" fill="#34d399" letter-spacing="2">
+    Find it. Save it. Snag it.
+  </text>
+
+  <!-- Value Propositions Badges -->
+  <g transform="translate(465, 400)">
+    <!-- Badge 1 -->
+    <rect x="0" y="0" width="180" height="42" rx="10" fill="#10b981" fill-opacity="0.12" stroke="#10b981" stroke-opacity="0.3"/>
+    <text x="90" y="26" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="700" font-size="15" fill="#a7f3d0" text-anchor="middle">🔥 HOT DEALS</text>
+
+    <!-- Badge 2 -->
+    <rect x="195" y="0" width="160" height="42" rx="10" fill="#10b981" fill-opacity="0.12" stroke="#10b981" stroke-opacity="0.3"/>
+    <text x="275" y="26" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="700" font-size="15" fill="#a7f3d0" text-anchor="middle">🆓 $0 FREE</text>
+
+    <!-- Badge 3 -->
+    <rect x="370" y="0" width="220" height="42" rx="10" fill="#10b981" fill-opacity="0.12" stroke="#10b981" stroke-opacity="0.3"/>
+    <text x="480" y="26" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="700" font-size="15" fill="#a7f3d0" text-anchor="middle">🏪 EVERYDAY STORES</text>
+  </g>
+
+  <!-- URL footer -->
+  <text x="465" y="495" font-family="'JetBrains Mono', monospace" font-weight="600" font-size="20" fill="#6b7280" letter-spacing="1">
+    VERIFIED DEALS • WEEKLY ADS • ZERO-COMMISSION RANKING
+  </text>
+</svg>

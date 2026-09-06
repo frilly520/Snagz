@@ -1,0 +1,7 @@
+{
+  "name": "SNAGZ",
+  "description": "Find it. Save it. Snag it. Real-time verified coupon aggregator, weekly circulars, digital coupons, and savings intelligence.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

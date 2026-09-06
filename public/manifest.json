@@ -1,0 +1,80 @@
+{
+  "id": "/",
+  "name": "SNAGZ",
+  "short_name": "SNAGZ",
+  "description": "Find it. Save it. Snag it. Real-time verified coupon aggregator, weekly circulars, digital coupons, and price drop intelligence.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#040605",
+  "theme_color": "#10b981",
+  "categories": ["shopping", "finance", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icons/snagz-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/snagz-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/snagz-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/snagz-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "🔥 Hot Deals",
+      "short_name": "Hot Deals",
+      "description": "View the most popular verified savings right now",
+      "url": "/?tab=deals",
+      "icons": [{ "src": "/icons/snagz-icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "🆓 Free Offers",
+      "short_name": "Free",
+      "description": "Discover verified $0 zero-cost deals and promotions",
+      "url": "/?tab=free",
+      "icons": [{ "src": "/icons/snagz-icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "🏪 Store Directory",
+      "short_name": "Stores",
+      "description": "Browse circulars & coupons for CVS, Kroger, Walmart & more",
+      "url": "/?tab=stores",
+      "icons": [{ "src": "/icons/snagz-icon-96.png", "sizes": "96x96" }]
+    }
+  ]
+}

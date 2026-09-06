@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 160" width="640" height="160">
+  <defs>
+    <linearGradient id="brandEmeraldH" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="50%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+  </defs>
+  <!-- Symbol Mini -->
+  <g transform="translate(16, 12) scale(0.17)">
+    <rect width="800" height="800" rx="180" fill="#10b981" fill-opacity="0.1" stroke="#10b981" stroke-opacity="0.3" stroke-width="16"/>
+    <path d="M 590 190 L 320 190 C 240 190 180 250 180 330 C 180 400 230 455 300 475 L 510 535 C 570 552 610 595 610 650 C 610 715 555 765 470 765 L 200 765 L 200 650 L 470 650 C 500 650 520 635 520 615 C 520 592 500 575 465 565 L 260 505 C 190 485 140 430 140 350 C 140 240 230 150 350 150 L 630 150 Z" fill="url(#brandEmeraldH)"/>
+    <path d="M 620 100 L 690 210 L 610 210 L 650 320 L 530 230 L 600 230 Z" fill="#6ee7b7"/>
+    <circle cx="330" cy="300" r="34" fill="#090d0b" stroke="#34d399" stroke-width="12"/>
+  </g>
+
+  <!-- Wordmark "SNAGZ" -->
+  <text x="180" y="98" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="900" font-size="78" fill="#ffffff" letter-spacing="2">
+    SNAG<tspan fill="url(#brandEmeraldH)">Z</tspan>
+  </text>
+
+  <!-- Tagline below -->
+  <text x="184" y="132" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="600" font-size="16" fill="#9ca3af" letter-spacing="3.5">
+    FIND IT. SAVE IT. SNAG IT.
+  </text>
+</svg>

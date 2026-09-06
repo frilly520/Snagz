@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+:root {
+  /* SNAGZ Centralized Brand Design Tokens */
+  --snagz-primary: #10b981;
+  --snagz-primary-hover: #059669;
+  --snagz-primary-light: #34d399;
+  --snagz-secondary: #06b6d4;
+  --snagz-bg: #070a08;
+  --snagz-surface: #0f1512;
+  --snagz-card: #141c18;
+  --snagz-card-hover: #19241f;
+  --snagz-border: #1e2b24;
+  --snagz-text: #f9fafb;
+  --snagz-text-muted: #9ca3af;
+  --snagz-success: #10b981;
+  --snagz-warning: #f59e0b;
+  --snagz-error: #f43f5e;
+  --snagz-deal-highlight: #f97316;
+  --snagz-free-highlight: #10b981;
+}
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--snagz-bg);
+    color: var(--snagz-text);
+  }
+  
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Custom sleek dark scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #404040;
+}
+

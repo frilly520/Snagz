@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <defs>
+    <linearGradient id="brandEmerald" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="50%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(10, 0)">
+    <!-- SNAGZ "S" Tag-Hook Symbol -->
+    <path d="M 590 190 
+             L 320 190 
+             C 240 190 180 250 180 330 
+             C 180 400 230 455 300 475 
+             L 510 535 
+             C 570 552 610 595 610 650 
+             C 610 715 555 765 470 765 
+             L 200 765 
+             L 200 650 
+             L 470 650 
+             C 500 650 520 635 520 615 
+             C 520 592 500 575 465 565 
+             L 260 505 
+             C 190 485 140 430 140 350 
+             C 140 240 230 150 350 150 
+             L 630 150 
+             Z" 
+          fill="url(#brandEmerald)"/>
+
+    <!-- Snag Spark Accent -->
+    <path d="M 620 100 
+             L 690 210 
+             L 610 210 
+             L 650 320 
+             L 530 230 
+             L 600 230 
+             Z" 
+          fill="#6ee7b7"/>
+
+    <!-- Eyelet Notch -->
+    <circle cx="330" cy="300" r="34" fill="#090d0b" stroke="#34d399" stroke-width="12"/>
+  </g>
+</svg>
