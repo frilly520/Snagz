@@ -7,6 +7,16 @@ const PORT = 3000;
 
 async function startServer() {
   try {
+    const server = app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+      console.log(`Server running on port ${PORT}`);
+      console.log(`SNAGZ Intelligence Server running on http://0.0.0.0:${PORT}`);
+    });
+
+    server.on('error', (err: any) => {
+      console.error('Server listen error:', err);
+    });
+
     // Vite SPA middleware for local development and AI Studio preview
     if (process.env.NODE_ENV !== 'production') {
       const vite = await createViteServer({
@@ -25,16 +35,6 @@ async function startServer() {
         res.sendFile(path.join(distPath, 'index.html'));
       });
     }
-
-    const server = app.listen(PORT, '0.0.0.0', () => {
-      console.log(`Server running on http://localhost:${PORT}`);
-      console.log(`Server running on port ${PORT}`);
-      console.log(`SNAGZ Intelligence Server running on http://0.0.0.0:${PORT}`);
-    });
-
-    server.on('error', (err: any) => {
-      console.error('Server listen error:', err);
-    });
   } catch (error) {
     console.error('Failed to start server:', error);
   }
