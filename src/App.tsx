@@ -447,8 +447,8 @@ export function App() {
                 }}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition shrink-0 ${
                   !freeOnly && !moneyMakerOnly && !recipesOnly && selectedCategory === 'All'
-                    ? 'bg-emerald-500 text-neutral-950 border-emerald-400 font-extrabold shadow-sm'
-                    : 'bg-neutral-900 hover:bg-neutral-800 border-neutral-800 text-neutral-200'
+                    ? 'bg-blue-600 text-white border-blue-500 font-extrabold shadow-sm shadow-blue-900/30'
+                    : 'bg-[#101524] hover:bg-[#182138] border-[#222b3e] text-neutral-200'
                 }`}
               >
                 <span>🔥 ALL DEALS</span>
@@ -474,7 +474,7 @@ export function App() {
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition shrink-0 ${
                   recipesOnly 
                     ? 'bg-purple-500/30 text-purple-300 border-purple-500/70 shadow-sm' 
-                    : 'bg-neutral-900 hover:bg-neutral-800 border-neutral-800 text-neutral-200'
+                    : 'bg-[#101524] hover:bg-[#182138] border-[#222b3e] text-neutral-200'
                 }`}
               >
                 <span>⚡ SAVINGS RECIPES</span>
@@ -491,7 +491,7 @@ export function App() {
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition shrink-0 ${
                   moneyMakerOnly 
                     ? 'bg-amber-500/30 text-amber-300 border-amber-500/70 shadow-sm' 
-                    : 'bg-neutral-900 hover:bg-neutral-800 border-neutral-800 text-neutral-200'
+                    : 'bg-[#101524] hover:bg-[#182138] border-[#222b3e] text-neutral-200'
                 }`}
               >
                 <span>💰 MONEY MAKERS</span>
@@ -506,8 +506,8 @@ export function App() {
                 }}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition shrink-0 ${
                   freeOnly 
-                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50' 
-                    : 'bg-neutral-900 hover:bg-neutral-800 border-neutral-800 text-neutral-200'
+                    ? 'bg-blue-500/20 text-blue-300 border-blue-500/50' 
+                    : 'bg-[#101524] hover:bg-[#182138] border-[#222b3e] text-neutral-200'
                 }`}
               >
                 <span>🆓 FREE ($0 OFFERS)</span>
@@ -523,8 +523,8 @@ export function App() {
                 }}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition shrink-0 ${
                   selectedCategory === 'Restaurants & Food'
-                    ? 'bg-teal-500/30 text-teal-300 border-teal-500/70'
-                    : 'bg-neutral-900 hover:bg-neutral-800 border-neutral-800 text-neutral-200'
+                    ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/60' 
+                    : 'bg-[#101524] hover:bg-[#182138] border-[#222b3e] text-neutral-200'
                 }`}
               >
                 <span>🛒 GROCERY & FOOD</span>
@@ -533,7 +533,7 @@ export function App() {
               <button
                 type="button"
                 onClick={() => setActiveTab('stores')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-xs font-bold text-neutral-200 transition shrink-0"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#101524] hover:bg-[#182138] border border-[#222b3e] text-xs font-bold text-neutral-200 transition shrink-0"
               >
                 <span>🏪 POPULAR STORES</span>
               </button>
@@ -705,18 +705,18 @@ export function App() {
           type="button"
           onClick={() => setIsAiAssistantOpen(true)}
           aria-label="Ask ZIG — Your Deal Hunter"
-          className="group flex items-center gap-3 pl-2 pr-4 py-2 rounded-full bg-neutral-950/95 hover:bg-neutral-900 text-white font-bold text-xs shadow-2xl shadow-emerald-950 border border-emerald-500/40 hover:border-emerald-400 transition-all hover:scale-105 backdrop-blur-md"
+          className="group flex items-center gap-3 pl-2 pr-4 py-2 rounded-full bg-[#0f1422]/95 hover:bg-[#161f36] text-white font-bold text-xs shadow-2xl shadow-blue-950/80 border border-blue-500/40 hover:border-blue-400 transition-all hover:scale-105 backdrop-blur-md"
         >
           <div className="relative">
-            <div className="w-8 h-8 rounded-full bg-neutral-900 border border-emerald-400/50 flex items-center justify-center overflow-hidden">
+            <div className="w-8 h-8 rounded-full bg-[#141926] border border-blue-400/50 flex items-center justify-center overflow-hidden">
               <ZigAvatar size={28} expression="confident" />
             </div>
-            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-neutral-950 animate-pulse" />
+            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-blue-400 border border-[#0f1422] animate-pulse" />
           </div>
           <div className="text-left leading-tight">
             <div className="flex items-center gap-1.5">
-              <span className="font-black text-emerald-400 tracking-wider">ZIG</span>
-              <span className="text-[9px] px-1 rounded bg-emerald-950 text-emerald-300 font-mono">HUNTER</span>
+              <span className="font-black text-blue-400 tracking-wider">ZIG</span>
+              <span className="text-[9px] px-1 rounded bg-blue-950 text-blue-300 font-mono">HUNTER</span>
             </div>
             <span className="text-[10px] text-neutral-400 font-normal">Ask for deals & stacks</span>
           </div>

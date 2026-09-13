@@ -110,23 +110,23 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
       <div 
         id="privacy-and-settings-modal"
-        className="w-full max-w-lg bg-neutral-900 border border-neutral-800 rounded-2xl p-5 sm:p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto"
+        className="w-full max-w-lg bg-[#0f1422] border border-[#222b3e] rounded-2xl p-5 sm:p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto"
       >
         <button
           id="btn-close-privacy-modal"
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition-colors"
+          className="absolute top-4 right-4 p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-[#1a2133] transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Header */}
-        <div className="flex items-center gap-2.5 mb-5 pb-4 border-b border-neutral-800">
-          <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+        <div className="flex items-center gap-2.5 mb-5 pb-4 border-b border-[#222b3e]">
+          <div className="p-2 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/30">
             <Shield className="w-5 h-5" />
           </div>
           <div>
@@ -136,9 +136,9 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
         </div>
 
         {/* Currency Switcher */}
-        <div className="mb-5 p-3.5 rounded-xl bg-neutral-950 border border-neutral-800">
+        <div className="mb-5 p-3.5 rounded-xl bg-[#0b0e17] border border-[#222b3e]">
           <label className="block text-xs font-bold text-neutral-200 mb-2 flex items-center gap-1.5">
-            <Globe className="w-4 h-4 text-sky-400" />
+            <Globe className="w-4 h-4 text-blue-400" />
             <span>Display Currency</span>
           </label>
           <div className="grid grid-cols-4 gap-2">
@@ -154,8 +154,8 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
                 onClick={() => setSettings({ ...settings, currency: c.code as SupportedCurrency })}
                 className={`py-2 px-2 text-center rounded-lg border text-xs font-bold transition-all ${
                   settings.currency === c.code 
-                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50' 
-                    : 'bg-neutral-900 text-neutral-400 border-neutral-800 hover:bg-neutral-850'
+                    ? 'bg-blue-500/20 text-blue-300 border-blue-500/50' 
+                    : 'bg-[#141926] text-neutral-400 border-[#222b3e] hover:bg-[#1f273b]'
                 }`}
               >
                 <div>{c.code}</div>
@@ -171,10 +171,10 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
             Data & Personalization Controls
           </div>
 
-          <div className="flex items-center justify-between p-3 rounded-xl bg-neutral-950 border border-neutral-800/80">
+          <div className="flex items-center justify-between p-3 rounded-xl bg-[#0b0e17] border border-[#222b3e]/80">
             <div>
               <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                <Sparkles className="w-3.5 h-3.5 text-blue-400" />
                 <span>Personalized Deal Feed</span>
               </div>
               <div className="text-[11px] text-neutral-400">
@@ -185,7 +185,7 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
               type="button"
               onClick={() => handleToggle('allowPersonalization')}
               className={`w-11 h-6 rounded-full transition-colors relative ${
-                settings.allowPersonalization ? 'bg-emerald-500' : 'bg-neutral-800'
+                settings.allowPersonalization ? 'bg-blue-600' : 'bg-[#1c2336]'
               }`}
             >
               <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-transform ${
@@ -194,7 +194,7 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
             </button>
           </div>
 
-          <div className="flex items-center justify-between p-3 rounded-xl bg-neutral-950 border border-neutral-800/80">
+          <div className="flex items-center justify-between p-3 rounded-xl bg-[#0b0e17] border border-[#222b3e]/80">
             <div>
               <div className="text-xs font-bold text-white flex items-center gap-1.5">
                 <MapPin className="w-3.5 h-3.5 text-amber-400" />
@@ -208,7 +208,7 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
               type="button"
               onClick={() => handleToggle('allowLocationDeals')}
               className={`w-11 h-6 rounded-full transition-colors relative ${
-                settings.allowLocationDeals ? 'bg-emerald-500' : 'bg-neutral-800'
+                settings.allowLocationDeals ? 'bg-blue-600' : 'bg-[#1c2336]'
               }`}
             >
               <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-transform ${
@@ -217,10 +217,10 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
             </button>
           </div>
 
-          <div className="flex items-center justify-between p-3 rounded-xl bg-neutral-950 border border-neutral-800/80">
+          <div className="flex items-center justify-between p-3 rounded-xl bg-[#0b0e17] border border-[#222b3e]/80">
             <div>
               <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                <Smartphone className="w-3.5 h-3.5 text-sky-400" />
+                <Smartphone className="w-3.5 h-3.5 text-indigo-400" />
                 <span>Offline Data Cache</span>
               </div>
               <div className="text-[11px] text-neutral-400">
@@ -231,7 +231,7 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
               type="button"
               onClick={() => handleToggle('enableOfflineCache')}
               className={`w-11 h-6 rounded-full transition-colors relative ${
-                settings.enableOfflineCache ? 'bg-emerald-500' : 'bg-neutral-800'
+                settings.enableOfflineCache ? 'bg-blue-600' : 'bg-[#1c2336]'
               }`}
             >
               <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-transform ${
@@ -242,7 +242,7 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
         </div>
 
         {/* Search History Management */}
-        <div className="mb-5 p-3.5 rounded-xl bg-neutral-950 border border-neutral-800">
+        <div className="mb-5 p-3.5 rounded-xl bg-[#0b0e17] border border-[#222b3e]">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-neutral-200">Recent Search History</span>
             {searchHistory.length > 0 && (
@@ -261,7 +261,7 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
           ) : (
             <div className="flex flex-wrap gap-1.5">
               {searchHistory.map((item, idx) => (
-                <span key={idx} className="text-xs px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300">
+                <span key={idx} className="text-xs px-2 py-0.5 rounded bg-[#141926] border border-[#222b3e] text-neutral-300">
                   {item}
                 </span>
               ))}
@@ -270,23 +270,23 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
         </div>
 
         {/* AI & API Key Protection Status Card */}
-        <div className="mb-5 p-4 rounded-xl bg-neutral-950 border border-neutral-800 space-y-2">
+        <div className="mb-5 p-4 rounded-xl bg-[#0b0e17] border border-[#222b3e] space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-emerald-400" />
+              <Shield className="w-4 h-4 text-blue-400" />
               <span className="text-xs font-bold text-white">AI Deal Engine & API Key Security</span>
             </div>
-            <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono">
-              <Check className="w-3 h-3 text-emerald-400" />
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 font-mono">
+              <Check className="w-3 h-3 text-blue-400" />
               SERVER-SIDE PROTECTED
             </span>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-xs">
-            <div className="p-2.5 rounded-lg bg-neutral-900 border border-neutral-800/80">
+            <div className="p-2.5 rounded-lg bg-[#141926] border border-[#222b3e]/80">
               <div className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">Client Privacy</div>
               <div className="text-neutral-200 font-bold mt-0.5 flex items-center gap-1.5">
-                <EyeOff className="w-3.5 h-3.5 text-emerald-400" />
+                <EyeOff className="w-3.5 h-3.5 text-blue-400" />
                 <span>Zero Browser Exposure</span>
               </div>
               <p className="text-[10px] text-neutral-400 mt-1 leading-snug">
@@ -294,10 +294,10 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
               </p>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-neutral-900 border border-neutral-800/80">
+            <div className="p-2.5 rounded-lg bg-[#141926] border border-[#222b3e]/80">
               <div className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">Engine Status</div>
               <div className="text-neutral-200 font-bold mt-0.5 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
                 <span>{aiStatus?.configured ? 'Active Gemini Model' : 'Active Server Intelligence'}</span>
               </div>
               <p className="text-[10px] text-neutral-400 mt-1 leading-snug">
@@ -308,22 +308,22 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
         </div>
 
         {/* About SNAGZ Section */}
-        <div className="mb-5 p-4 rounded-xl bg-neutral-950 border border-neutral-800 flex items-center justify-between">
+        <div className="mb-5 p-4 rounded-xl bg-[#0b0e17] border border-[#222b3e] flex items-center justify-between">
           <div className="flex items-center gap-3">
             <SnagzLogo variant="symbol" size="md" />
             <div>
-              <div className="text-sm font-black text-white">SNAG<span className="text-emerald-400">Z</span></div>
-              <div className="text-[10px] font-bold text-emerald-400 tracking-wider uppercase">Find it. Save it. Snag it.</div>
+              <div className="text-sm font-black text-white">SNAG<span className="text-blue-400">Z</span></div>
+              <div className="text-[10px] font-bold text-blue-400 tracking-wider uppercase">Find it. Save it. Snag it.</div>
               <div className="text-[10px] text-neutral-400 mt-0.5">Version 2.0.0 • Verified Real-Time Deal Intelligence</div>
             </div>
           </div>
-          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-500/30">
+          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-500/30">
             PWA READY
           </span>
         </div>
 
         {/* Danger Zone: Purge All */}
-        <div className="mb-6 pt-3 border-t border-neutral-800 flex items-center justify-between text-xs">
+        <div className="mb-6 pt-3 border-t border-[#222b3e] flex items-center justify-between text-xs">
           <span className="text-neutral-400">Erase all saved lists and stored preferences:</span>
           <button
             type="button"
@@ -335,11 +335,11 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-end gap-2 pt-3 border-t border-neutral-800">
+        <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#222b3e]">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-300 font-semibold text-xs transition-colors"
+            className="px-4 py-2 rounded-xl bg-[#141926] hover:bg-[#1f273b] text-neutral-300 font-semibold text-xs transition-colors"
           >
             Cancel
           </button>
@@ -348,7 +348,7 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
             type="button"
             disabled={loading}
             onClick={handleSave}
-            className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-bold text-xs shadow-md shadow-emerald-500/20 transition-all flex items-center gap-1.5"
+            className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5"
           >
             {savedSuccess ? (
               <>

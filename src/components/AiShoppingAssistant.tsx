@@ -123,10 +123,10 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
       <div 
         id="zig-deal-hunter-drawer"
         onClick={(e) => e.stopPropagation()}
-        className="w-full sm:w-[480px] h-full sm:h-[88vh] bg-neutral-900 border-l sm:border border-neutral-800 sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-right duration-200"
+        className="w-full sm:w-[480px] h-full sm:h-[88vh] bg-[#101422] border-l sm:border border-[#222b3e] sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-right duration-200"
       >
         {/* Header with ZIG Mascot Branding */}
-        <div className="p-4 bg-neutral-950 border-b border-neutral-800 flex items-center justify-between">
+        <div className="p-4 bg-[#0d101a] border-b border-[#222b3e] flex items-center justify-between">
           <ZigChatHeaderTitle />
 
           <div className="flex items-center gap-1.5">
@@ -134,7 +134,7 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
               type="button"
               onClick={handleResetConversation}
               title="Reset conversation with ZIG"
-              className="p-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-400 hover:text-white transition-colors"
+              className="p-2 rounded-lg bg-[#141926] hover:bg-[#1a2133] border border-[#222b3e] text-slate-400 hover:text-white transition-colors"
             >
               <RotateCcw className="w-4 h-4" />
             </button>
@@ -143,7 +143,7 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
               type="button"
               onClick={onClose}
               aria-label="Close ZIG"
-              className="p-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-400 hover:text-white transition-colors"
+              className="p-2 rounded-lg bg-[#141926] hover:bg-[#1a2133] border border-[#222b3e] text-slate-400 hover:text-white transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -160,32 +160,32 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
               {/* Avatar */}
               <div className="shrink-0 pt-0.5">
                 {m.role === 'user' ? (
-                  <div className="w-7 h-7 rounded-lg bg-emerald-500 text-neutral-950 font-bold flex items-center justify-center shadow-md">
+                  <div className="w-7 h-7 rounded-lg bg-blue-600 text-white font-bold flex items-center justify-center shadow-md">
                     <User className="w-4 h-4" />
                   </div>
                 ) : (
-                  <div className="w-8 h-8 rounded-xl bg-neutral-950 border border-emerald-500/30 flex items-center justify-center overflow-hidden shadow-md">
+                  <div className="w-8 h-8 rounded-lg bg-[#0d101a] border border-blue-500/30 flex items-center justify-center overflow-hidden shadow-md">
                     <ZigAvatar size={30} expression="confident" />
                   </div>
                 )}
               </div>
 
               {/* Message Bubble */}
-              <div className={`max-w-[86%] rounded-2xl p-3.5 ${
+              <div className={`max-w-[86%] rounded-xl p-3.5 ${
                 m.role === 'user'
-                  ? 'bg-emerald-500 text-neutral-950 font-semibold'
-                  : 'bg-neutral-950 border border-neutral-800 text-neutral-200 shadow-md'
+                  ? 'bg-blue-600 text-white font-medium'
+                  : 'bg-[#141926] border border-[#222b3e] text-slate-200 shadow-md'
               }`}>
                 {m.role === 'assistant' && (
-                  <div className="flex items-center gap-1 text-[10px] font-black text-emerald-400 uppercase tracking-wider mb-1">
-                    <Zap className="w-3 h-3 fill-emerald-400" />
+                  <div className="flex items-center gap-1 text-[10px] font-bold text-blue-400 uppercase tracking-wider mb-1">
+                    <Zap className="w-3 h-3 fill-blue-400 text-blue-400" />
                     <span>ZIG</span>
                   </div>
                 )}
                 <div className="whitespace-pre-wrap font-sans space-y-2">
                   {m.content}
                 </div>
-                <span className={`text-[10px] block mt-2 ${m.role === 'user' ? 'text-emerald-950/70' : 'text-neutral-500'}`}>
+                <span className={`text-[10px] block mt-2 ${m.role === 'user' ? 'text-blue-200' : 'text-slate-500'}`}>
                   {m.time}
                 </span>
               </div>
@@ -210,13 +210,13 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
         </div>
 
         {/* Quick Suggestion Chips */}
-        <div className="p-2.5 bg-neutral-950/80 border-t border-neutral-800 flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+        <div className="p-2.5 bg-[#0d101a] border-t border-[#222b3e] flex items-center gap-1.5 overflow-x-auto scrollbar-none">
           {samplePrompts.map((p, idx) => (
             <button
               key={idx}
               type="button"
               onClick={() => handleSend(p)}
-              className="px-2.5 py-1 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-[11px] text-neutral-300 hover:text-emerald-300 whitespace-nowrap transition-colors flex items-center gap-1 shrink-0 font-medium"
+              className="px-2.5 py-1 rounded-md bg-[#141926] hover:bg-[#1a2133] border border-[#222b3e] text-[11px] text-slate-300 hover:text-blue-300 whitespace-nowrap transition-colors flex items-center gap-1 shrink-0 font-medium"
             >
               <span>{p}</span>
             </button>
@@ -229,7 +229,7 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
             e.preventDefault();
             handleSend();
           }}
-          className="p-3 bg-neutral-950 border-t border-neutral-800 flex items-center gap-2"
+          className="p-3 bg-[#0d101a] border-t border-[#222b3e] flex items-center gap-2"
         >
           <div className="relative flex-1">
             <input
@@ -238,13 +238,13 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               placeholder="Give ZIG a store, product, or budget (e.g. CVS deals)..."
-              className="w-full pl-3.5 pr-8 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-xs text-white placeholder-neutral-500 focus:border-emerald-500 focus:outline-none"
+              className="w-full pl-3.5 pr-8 py-2 rounded-lg bg-[#141926] border border-[#222b3e] text-xs text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none"
             />
             {inputText && (
               <button
                 type="button"
                 onClick={() => setInputText('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-white"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -256,7 +256,7 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
             type="submit"
             disabled={!inputText.trim() || isLoading}
             aria-label="Send to ZIG"
-            className="p-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed text-neutral-950 font-bold transition-all shadow-md flex items-center justify-center shrink-0"
+            className="p-2 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold transition-all shadow-md flex items-center justify-center shrink-0"
           >
             <Send className="w-4 h-4" />
           </button>

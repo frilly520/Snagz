@@ -41,16 +41,16 @@ export const WhyNotFreeModal: React.FC<WhyNotFreeModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
       <div 
         id="why-not-free-modal"
-        className="w-full max-w-lg bg-neutral-900 border border-neutral-800 rounded-2xl p-5 sm:p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto"
+        className="w-full max-w-lg bg-[#0f1422] border border-[#222b3e] rounded-2xl p-5 sm:p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto"
       >
         <button
           id="btn-close-why-not-free"
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition-colors"
+          className="absolute top-4 right-4 p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-[#1a2133] transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -59,7 +59,7 @@ export const WhyNotFreeModal: React.FC<WhyNotFreeModalProps> = ({
         <div className="flex items-center gap-2 mb-3">
           <div className={`p-2 rounded-xl border ${
             analysis.isActuallyFree 
-              ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' 
+              ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' 
               : 'bg-amber-500/20 text-amber-400 border-amber-500/30'
           }`}>
             <Gift className="w-5 h-5" />
@@ -73,11 +73,11 @@ export const WhyNotFreeModal: React.FC<WhyNotFreeModalProps> = ({
         {/* Headline Callout */}
         <div className={`p-3.5 rounded-xl border mb-4 text-xs font-bold leading-snug flex items-start gap-2 ${
           analysis.isActuallyFree 
-            ? 'bg-emerald-950/60 text-emerald-300 border-emerald-500/40' 
+            ? 'bg-blue-950/60 text-blue-200 border-blue-500/40' 
             : 'bg-amber-950/60 text-amber-300 border-amber-500/40'
         }`}>
           {analysis.isActuallyFree ? (
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+            <CheckCircle2 className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
           ) : (
             <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
           )}
@@ -85,7 +85,7 @@ export const WhyNotFreeModal: React.FC<WhyNotFreeModalProps> = ({
         </div>
 
         {/* Deal Summary Box */}
-        <div className="p-3 rounded-xl bg-neutral-950 border border-neutral-800 text-xs text-neutral-300 mb-4">
+        <div className="p-3 rounded-xl bg-[#0b0e17] border border-[#222b3e] text-xs text-neutral-300 mb-4">
           <div className="font-semibold text-white mb-1">{deal.title}</div>
           <div className="text-neutral-400">{analysis.explanation}</div>
         </div>
@@ -94,8 +94,8 @@ export const WhyNotFreeModal: React.FC<WhyNotFreeModalProps> = ({
         {!analysis.isActuallyFree && (
           <div className="grid grid-cols-2 gap-2 mb-4">
             {analysis.minimumCommitmentDollar !== undefined && (
-              <div className="p-3 rounded-xl bg-neutral-950 border border-neutral-800">
-                <div className="text-[11px] text-neutral-500 flex items-center gap-1 mb-1">
+              <div className="p-3 rounded-xl bg-[#0b0e17] border border-[#222b3e]">
+                <div className="text-[11px] text-neutral-400 flex items-center gap-1 mb-1">
                   <DollarSign className="w-3.5 h-3.5 text-amber-400" />
                   <span>Min Commitment</span>
                 </div>
@@ -106,12 +106,12 @@ export const WhyNotFreeModal: React.FC<WhyNotFreeModalProps> = ({
             )}
 
             {analysis.contractTermMonths && (
-              <div className="p-3 rounded-xl bg-neutral-950 border border-neutral-800">
-                <div className="text-[11px] text-neutral-500 flex items-center gap-1 mb-1">
-                  <Calendar className="w-3.5 h-3.5 text-sky-400" />
+              <div className="p-3 rounded-xl bg-[#0b0e17] border border-[#222b3e]">
+                <div className="text-[11px] text-neutral-400 flex items-center gap-1 mb-1">
+                  <Calendar className="w-3.5 h-3.5 text-blue-400" />
                   <span>Contract Term</span>
                 </div>
-                <div className="text-base font-black text-sky-400">
+                <div className="text-base font-black text-blue-400">
                   {analysis.contractTermMonths} Months
                 </div>
               </div>
@@ -125,7 +125,7 @@ export const WhyNotFreeModal: React.FC<WhyNotFreeModalProps> = ({
             Mandatory Conditions & Fine Print:
           </div>
           {analysis.requirements.map((req, idx) => (
-            <div key={idx} className="flex items-start gap-2 text-xs text-neutral-300 p-2 rounded-lg bg-neutral-950/60 border border-neutral-800/60">
+            <div key={idx} className="flex items-start gap-2 text-xs text-neutral-300 p-2 rounded-lg bg-[#0b0e17]/60 border border-[#222b3e]/60">
               <Info className="w-3.5 h-3.5 text-neutral-400 shrink-0 mt-0.5" />
               <span>{req}</span>
             </div>
@@ -133,15 +133,15 @@ export const WhyNotFreeModal: React.FC<WhyNotFreeModalProps> = ({
         </div>
 
         {/* Trust Badges Footer */}
-        <div className="pt-3 border-t border-neutral-800 flex items-center justify-between text-[11px] text-neutral-400">
+        <div className="pt-3 border-t border-[#222b3e] flex items-center justify-between text-[11px] text-neutral-400">
           <div className="flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <ShieldCheck className="w-4 h-4 text-blue-400" />
             <span>SNAGZ Zero-Cost Audit</span>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-white font-semibold text-xs transition-colors"
+            className="px-4 py-1.5 rounded-lg bg-[#1a2133] hover:bg-[#252f47] text-white font-semibold text-xs transition-colors"
           >
             Close Audit
           </button>

@@ -91,11 +91,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   return (
     <div id="admin-dashboard" className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-2xl bg-neutral-900 border border-neutral-800">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[#0f1422] border border-[#222b3e]">
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-black text-white">Deal Intelligence Operations & Admin</h1>
-            <span className="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
+            <span className="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
               Admin Mode
             </span>
           </div>
@@ -108,7 +108,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           type="button"
           disabled={isRunningPipeline}
           onClick={handleTriggerPipeline}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-neutral-950 font-bold text-xs shadow-lg transition-all"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold text-xs shadow-lg shadow-blue-900/30 transition-all"
         >
           <RefreshCw className={`w-4 h-4 ${isRunningPipeline ? 'animate-spin' : ''}`} />
           <span>{isRunningPipeline ? 'Ingesting Feeds...' : 'Run Ingestion Pipeline'}</span>
@@ -117,14 +117,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* Pipeline Result Toast if just run */}
       {pipelineResult && (
-        <div className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-xs text-emerald-300 flex items-center justify-between">
+        <div className="p-4 rounded-xl bg-blue-950/60 border border-blue-500/40 text-xs text-blue-200 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <CheckCircle2 className="w-4 h-4 text-blue-400" />
             <span>
               Ingestion complete! Discovered: {pipelineResult.discovered} • Filtered duplicates: {pipelineResult.deduped} • Ingested: {pipelineResult.saved} items in {pipelineResult.durationMs}ms.
             </span>
           </div>
-          <button type="button" onClick={() => setPipelineResult(null)} className="text-emerald-400 hover:text-white">
+          <button type="button" onClick={() => setPipelineResult(null)} className="text-blue-400 hover:text-white">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -133,37 +133,37 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Metrics Cards Grid */}
       {metrics && (
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
-          <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-800">
-            <span className="text-[11px] text-neutral-500 uppercase tracking-wider block">Total Deals</span>
+          <div className="p-4 rounded-xl bg-[#0f1422] border border-[#222b3e]">
+            <span className="text-[11px] text-neutral-400 uppercase tracking-wider block">Total Deals</span>
             <span className="text-xl font-bold text-white font-mono mt-1 block">{metrics.totalDeals}</span>
           </div>
 
-          <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-800">
-            <span className="text-[11px] text-emerald-400 uppercase tracking-wider block">Active Verified</span>
-            <span className="text-xl font-bold text-emerald-400 font-mono mt-1 block">{metrics.activeDeals}</span>
+          <div className="p-4 rounded-xl bg-[#0f1422] border border-[#222b3e]">
+            <span className="text-[11px] text-blue-400 uppercase tracking-wider block">Active Verified</span>
+            <span className="text-xl font-bold text-blue-400 font-mono mt-1 block">{metrics.activeDeals}</span>
           </div>
 
-          <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-800">
+          <div className="p-4 rounded-xl bg-[#0f1422] border border-[#222b3e]">
             <span className="text-[11px] text-amber-400 uppercase tracking-wider block">Expiring Soon</span>
             <span className="text-xl font-bold text-amber-400 font-mono mt-1 block">{metrics.expiringDeals}</span>
           </div>
 
-          <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-800">
+          <div className="p-4 rounded-xl bg-[#0f1422] border border-[#222b3e]">
             <span className="text-[11px] text-rose-400 uppercase tracking-wider block">Expired</span>
             <span className="text-xl font-bold text-rose-400 font-mono mt-1 block">{metrics.expiredDeals}</span>
           </div>
 
-          <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-800">
-            <span className="text-[11px] text-sky-400 uppercase tracking-wider block">Free Stuff</span>
-            <span className="text-xl font-bold text-sky-400 font-mono mt-1 block">{metrics.freeOffersCount}</span>
+          <div className="p-4 rounded-xl bg-[#0f1422] border border-[#222b3e]">
+            <span className="text-[11px] text-indigo-400 uppercase tracking-wider block">Free Stuff</span>
+            <span className="text-xl font-bold text-indigo-400 font-mono mt-1 block">{metrics.freeOffersCount}</span>
           </div>
 
-          <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-800">
+          <div className="p-4 rounded-xl bg-[#0f1422] border border-[#222b3e]">
             <span className="text-[11px] text-neutral-400 uppercase tracking-wider block">Avg Quality</span>
             <span className="text-xl font-bold text-white font-mono mt-1 block">{metrics.averageDealScore}/100</span>
           </div>
 
-          <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-800">
+          <div className="p-4 rounded-xl bg-[#0f1422] border border-[#222b3e]">
             <span className="text-[11px] text-rose-400 uppercase tracking-wider block">Pending Reports</span>
             <span className="text-xl font-bold text-rose-300 font-mono mt-1 block">{metrics.userReportsPending || 0}</span>
           </div>
@@ -172,18 +172,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* Category Balancing & Anti-Fashion Bias Monitor */}
       {metrics && metrics.categoryBalance && (
-        <div className="p-5 rounded-2xl bg-neutral-900 border border-neutral-800 space-y-4">
+        <div className="p-5 rounded-2xl bg-[#0f1422] border border-[#222b3e] space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h3 className="font-bold text-white text-sm flex items-center gap-2">
-                <Layers className="w-4 h-4 text-emerald-400" />
+                <Layers className="w-4 h-4 text-blue-400" />
                 <span>Retail Category Balancing & Everyday-Savings Monitor</span>
               </h3>
               <p className="text-xs text-neutral-400 mt-0.5">
                 Target: Maintain broad everyday retail distribution. Prevent national fashion & luxury over-indexing.
               </p>
             </div>
-            <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
+            <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-blue-500/10 text-blue-300 border border-blue-500/30">
               Everyday Focus: Active
             </span>
           </div>
@@ -208,7 +208,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     ? 'bg-rose-950/30 border-rose-500/40' 
                     : cat.status === 'UNDER_REPRESENTED'
                     ? 'bg-amber-950/20 border-amber-500/30'
-                    : 'bg-neutral-950 border-neutral-800'
+                    : 'bg-[#0b0e17] border-[#222b3e]'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1.5">
@@ -218,7 +218,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       ? 'bg-rose-500/20 text-rose-300'
                       : cat.status === 'UNDER_REPRESENTED'
                       ? 'bg-amber-500/20 text-amber-300'
-                      : 'bg-emerald-500/20 text-emerald-300'
+                      : 'bg-blue-500/20 text-blue-300'
                   }`}>
                     {cat.status}
                   </span>
@@ -230,14 +230,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
 
                 {/* Progress bar */}
-                <div className="w-full h-1.5 bg-neutral-800 rounded-full overflow-hidden">
+                <div className="w-full h-1.5 bg-[#1a2133] rounded-full overflow-hidden">
                   <div 
                     className={`h-full rounded-full transition-all ${
                       cat.status === 'OVER_WEIGHTED'
                         ? 'bg-rose-500'
                         : cat.status === 'UNDER_REPRESENTED'
                         ? 'bg-amber-400'
-                        : 'bg-emerald-400'
+                        : 'bg-blue-500'
                     }`}
                     style={{ width: `${Math.min(100, cat.percentage * 3)}%` }}
                   />
@@ -250,11 +250,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* Retailer Discovery Health Matrix */}
       {metrics && metrics.retailerHealth && (
-        <div className="p-5 rounded-2xl bg-neutral-900 border border-neutral-800">
+        <div className="p-5 rounded-2xl bg-[#0f1422] border border-[#222b3e]">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="font-bold text-white text-sm flex items-center gap-2">
-                <Database className="w-4 h-4 text-sky-400" />
+                <Database className="w-4 h-4 text-blue-400" />
                 <span>Everyday Retailer Source Discovery & Crawler Telemetry</span>
               </h3>
               <p className="text-xs text-neutral-400 mt-0.5">
@@ -269,7 +269,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="border-b border-neutral-800 text-neutral-500 uppercase text-[10px] tracking-wider">
+                <tr className="border-b border-[#222b3e] text-neutral-400 uppercase text-[10px] tracking-wider">
                   <th className="py-2.5 px-3">Retailer</th>
                   <th className="py-2.5 px-3">Category</th>
                   <th className="py-2.5 px-3">Active Deals</th>
@@ -279,29 +279,29 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <th className="py-2.5 px-3">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-800/60 font-mono">
+              <tbody className="divide-y divide-[#222b3e]/60 font-mono">
                 {metrics.retailerHealth.map((r, i) => (
-                  <tr key={i} className="hover:bg-neutral-800/40 transition-colors">
+                  <tr key={i} className="hover:bg-[#141926] transition-colors">
                     <td className="py-2.5 px-3 font-sans font-bold text-white flex items-center gap-2">
                       <img src={r.logo} alt="" className="w-5 h-5 rounded object-cover" />
                       <span>{r.storeName}</span>
                     </td>
                     <td className="py-2.5 px-3 font-sans text-neutral-400 text-[11px]">{r.category}</td>
                     <td className="py-2.5 px-3 text-white font-bold">{r.activeDeals}</td>
-                    <td className="py-2.5 px-3 text-emerald-400">
+                    <td className="py-2.5 px-3 text-blue-400">
                       {r.activeDeals > 0 ? `${Math.round((r.verifiedDeals / r.activeDeals) * 100)}%` : '100%'}
                     </td>
                     <td className="py-2.5 px-3 text-neutral-400">{r.averageLatencyMs}ms</td>
                     <td className="py-2.5 px-3">
                       <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                        r.searchPriorityWeight > 1.0 ? 'bg-sky-500/20 text-sky-300' : 'bg-neutral-800 text-neutral-400'
+                        r.searchPriorityWeight > 1.0 ? 'bg-blue-500/20 text-blue-300' : 'bg-[#141926] text-neutral-400'
                       }`}>
                         {r.searchPriorityWeight}x (Boosted)
                       </span>
                     </td>
                     <td className="py-2.5 px-3 font-sans">
-                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
                         Healthy
                       </span>
                     </td>
@@ -316,7 +316,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Two Column Layout: Moderation Queue & Pipeline Health */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* User Moderation Queue */}
-        <div className="p-5 rounded-2xl bg-neutral-900 border border-neutral-800">
+        <div className="p-5 rounded-2xl bg-[#0f1422] border border-[#222b3e]">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-bold text-white text-sm flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-amber-400" />
@@ -338,31 +338,31 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
             ) : (
               reports.map((r) => (
-                <div key={r.id} className="p-3.5 rounded-xl bg-neutral-950 border border-neutral-800 text-xs">
+                <div key={r.id} className="p-3.5 rounded-xl bg-[#0b0e17] border border-[#222b3e] text-xs">
                   <div className="flex items-start justify-between gap-2 mb-1.5">
                     <div>
                       <span className="font-bold text-white block">{r.dealTitle}</span>
                       <span className="text-[11px] text-neutral-400">{r.storeName} • Issue: <strong className="text-rose-400">{r.reportType}</strong></span>
                     </div>
                     <span className={`text-[10px] px-2 py-0.5 rounded font-mono ${
-                      r.status === 'pending' ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-neutral-800 text-neutral-400'
+                      r.status === 'pending' ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-[#141926] text-neutral-400'
                     }`}>
                       {r.status}
                     </span>
                   </div>
 
                   {r.comment && (
-                    <p className="text-[11px] text-neutral-300 bg-neutral-900 p-2 rounded-lg my-2 font-mono">
+                    <p className="text-[11px] text-neutral-300 bg-[#141926] p-2 rounded-lg my-2 font-mono">
                       "{r.comment}"
                     </p>
                   )}
 
                   {r.status === 'pending' && (
-                    <div className="flex items-center justify-end gap-2 mt-2 pt-2 border-t border-neutral-800/60">
+                    <div className="flex items-center justify-end gap-2 mt-2 pt-2 border-t border-[#222b3e]/60">
                       <button
                         type="button"
                         onClick={() => handleResolveReport(r.id, 'dismissed')}
-                        className="px-2.5 py-1 rounded bg-neutral-800 text-neutral-300 hover:text-white text-[11px]"
+                        className="px-2.5 py-1 rounded bg-[#1a2133] text-neutral-300 hover:text-white text-[11px]"
                       >
                         Dismiss
                       </button>
@@ -385,53 +385,53 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
 
         {/* Source Health & Telemetry */}
-        <div className="p-5 rounded-2xl bg-neutral-900 border border-neutral-800">
+        <div className="p-5 rounded-2xl bg-[#0f1422] border border-[#222b3e]">
           <h3 className="font-bold text-white text-sm flex items-center gap-2 mb-4">
-            <Cpu className="w-4 h-4 text-sky-400" />
+            <Cpu className="w-4 h-4 text-blue-400" />
             <span>Data Ingestion Adapters & Health</span>
           </h3>
 
           <div className="space-y-3 text-xs">
-            <div className="p-3 rounded-xl bg-neutral-950 border border-neutral-800 flex items-center justify-between">
+            <div className="p-3 rounded-xl bg-[#0b0e17] border border-[#222b3e] flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-400"></span>
                 <div>
                   <strong className="text-white block">Retailer Direct API Adapters (Priority 1)</strong>
                   <span className="text-neutral-500 text-[11px]">Target, Best Buy, Nike Direct Feeds</span>
                 </div>
               </div>
-              <span className="text-emerald-400 font-mono font-bold">100% Operational</span>
+              <span className="text-blue-400 font-mono font-bold">100% Operational</span>
             </div>
 
-            <div className="p-3 rounded-xl bg-neutral-950 border border-neutral-800 flex items-center justify-between">
+            <div className="p-3 rounded-xl bg-[#0b0e17] border border-[#222b3e] flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-400"></span>
                 <div>
                   <strong className="text-white block">Public $0 Free Promotions Crawler</strong>
                   <span className="text-neutral-500 text-[11px]">Giveaways, Samples & Loyalty Perks</span>
                 </div>
               </div>
-              <span className="text-emerald-400 font-mono font-bold">98.5% Confidence</span>
+              <span className="text-blue-400 font-mono font-bold">98.5% Confidence</span>
             </div>
 
-            <div className="p-3 rounded-xl bg-neutral-950 border border-neutral-800 flex items-center justify-between">
+            <div className="p-3 rounded-xl bg-[#0b0e17] border border-[#222b3e] flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-400"></span>
                 <div>
                   <strong className="text-white block">Gemini 3.7 Flash Intent & NLP Engine</strong>
                   <span className="text-neutral-500 text-[11px]">Search Intent Parser & Receipt OCR</span>
                 </div>
               </div>
-              <span className="text-emerald-400 font-mono font-bold">Connected</span>
+              <span className="text-blue-400 font-mono font-bold">Connected</span>
             </div>
           </div>
 
           <h4 className="font-bold text-neutral-300 text-xs mt-5 mb-2">Recent Pipeline Ingestion Runs</h4>
           <div className="space-y-1.5 text-xs font-mono max-h-40 overflow-y-auto">
             {recentRuns.map((run, i) => (
-              <div key={i} className="p-2 rounded-lg bg-neutral-950 border border-neutral-800 flex items-center justify-between text-[11px]">
+              <div key={i} className="p-2 rounded-lg bg-[#0b0e17] border border-[#222b3e] flex items-center justify-between text-[11px]">
                 <span className="text-neutral-400">{new Date(run.timestamp).toLocaleTimeString()}</span>
-                <span className="text-emerald-400">+{run.itemsIngested} items</span>
+                <span className="text-blue-400">+{run.itemsIngested} items</span>
                 <span className="text-neutral-500">{run.duplicatesFiltered} deduped</span>
                 <span className="text-neutral-400">{run.durationMs}ms</span>
               </div>

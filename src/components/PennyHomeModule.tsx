@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Barcode, 
-  Copy, 
   Check, 
   ArrowRight, 
-  Clock, 
-  CheckCircle2, 
-  Sparkles,
-  Tag
+  Clock 
 } from 'lucide-react';
 import { PennyItem } from '../types';
 import { api } from '../services/api';
@@ -52,67 +48,66 @@ export const PennyHomeModule: React.FC<PennyHomeModuleProps> = ({
   return (
     <div 
       id="homepage-penny-finds-module"
-      className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-neutral-900 via-neutral-900 to-amber-950/30 border border-neutral-800/90 p-4 sm:p-5 shadow-lg"
+      className="rounded-xl bg-[#121624] border border-[#222b3e] p-4 sm:p-5"
     >
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+      <div className="flex items-center justify-between gap-3 mb-3">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-400 text-neutral-950 tracking-wider">
-              1¢ PENNY FINDS
-            </span>
-            <span className="text-[11px] font-bold text-amber-300 font-mono">
-              {count} CURRENT PENNY FINDS
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-1.5">
+              <span>🪙 Penny Finds</span>
+            </h3>
+            <span className="text-[11px] font-bold text-amber-300 font-mono bg-amber-400/10 border border-amber-400/20 px-2 py-0.5 rounded">
+              {count} Active
             </span>
           </div>
-          <div className="flex items-center gap-2 text-xs text-neutral-400">
-            <Clock className="w-3.5 h-3.5 text-neutral-500" />
-            <span>Last updated moments ago • Dollar General Verified Point-of-Sale Markdowns</span>
-          </div>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Dollar General & retailer confirmed $0.01 point-of-sale clearance markdowns
+          </p>
         </div>
 
         <button
           type="button"
           onClick={onViewAllPennyFinds}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors group shrink-0"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors shrink-0"
         >
-          <span>VIEW ALL PENNY FINDS</span>
-          <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+          <span>See all</span>
+          <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>
 
-      {/* Quick 3-card preview row */}
+      {/* 3-card preview row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {items.map((item) => (
           <div
             key={item.id}
             onClick={onViewAllPennyFinds}
-            className="group/card cursor-pointer bg-neutral-950/70 hover:bg-neutral-950 border border-neutral-800/80 hover:border-amber-500/40 rounded-xl p-3 transition-all flex flex-col justify-between"
+            className="cursor-pointer bg-[#141926] hover:bg-[#181f30] border border-[#222b3e] hover:border-amber-400/30 rounded-lg p-3 transition-colors flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between gap-2 mb-2">
-                <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wider">
+                <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider truncate">
                   {item.brand}
                 </span>
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                  CONFIRMED 1¢
+                <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-amber-400/15 text-amber-300 border border-amber-400/30">
+                  1¢ CONFIRMED
                 </span>
               </div>
 
               <div className="flex gap-2.5 items-start mb-2">
-                <div className="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 overflow-hidden shrink-0">
+                <div className="w-11 h-11 rounded-lg bg-[#0e121c] border border-[#222b3e] overflow-hidden shrink-0">
                   <img
                     src={item.productImage}
                     alt={item.productName}
                     referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover group-hover/card:scale-105 transition-transform"
+                    className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-xs font-bold text-white line-clamp-2 leading-snug group-hover/card:text-amber-300 transition-colors">
+                  <h4 className="text-xs font-bold text-white line-clamp-2 leading-snug">
                     {item.productName}
                   </h4>
                   {item.seasonalInfo && (
-                    <span className="text-[10px] text-amber-400/90 block truncate mt-0.5">
+                    <span className="text-[10px] text-slate-400 block truncate mt-0.5">
                       {item.seasonalInfo}
                     </span>
                   )}
@@ -120,17 +115,17 @@ export const PennyHomeModule: React.FC<PennyHomeModuleProps> = ({
               </div>
             </div>
 
-            <div className="mt-2 pt-2 border-t border-neutral-800/80 flex items-center justify-between">
+            <div className="pt-2 border-t border-[#1f2638] flex items-center justify-between">
               <div className="flex items-baseline gap-1.5">
                 <span className="text-base font-black text-amber-400 font-mono">$0.01</span>
-                <span className="text-[10px] text-neutral-500 line-through font-mono">${item.previousPrice.toFixed(2)}</span>
+                <span className="text-[11px] text-slate-400 line-through font-mono">${item.previousPrice.toFixed(2)}</span>
               </div>
 
               <button
                 type="button"
                 onClick={(e) => handleCopyUpc(item, e)}
                 title="Copy UPC Barcode"
-                className="flex items-center gap-1 px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-[10px] font-semibold text-neutral-300 hover:text-white border border-neutral-800 transition-colors"
+                className="flex items-center gap-1 px-2 py-0.5 rounded bg-[#1a2133] hover:bg-[#222b3e] text-[10px] font-semibold text-slate-300 hover:text-white border border-[#222b3e] transition-colors"
               >
                 {copiedUpcId === item.id ? (
                   <>
@@ -139,7 +134,7 @@ export const PennyHomeModule: React.FC<PennyHomeModuleProps> = ({
                   </>
                 ) : (
                   <>
-                    <Barcode className="w-3 h-3 text-neutral-400" />
+                    <Barcode className="w-3 h-3 text-slate-400" />
                     <span>UPC</span>
                   </>
                 )}

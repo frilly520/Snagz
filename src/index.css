@@ -1,30 +1,30 @@
 @import "tailwindcss";
 
 :root {
-  /* SNAGZ Centralized Brand Design Tokens */
-  --snagz-primary: #10b981;
-  --snagz-primary-hover: #059669;
-  --snagz-primary-light: #34d399;
-  --snagz-secondary: #06b6d4;
-  --snagz-bg: #070a08;
-  --snagz-surface: #0f1512;
-  --snagz-card: #141c18;
-  --snagz-card-hover: #19241f;
-  --snagz-border: #1e2b24;
-  --snagz-text: #f9fafb;
-  --snagz-text-muted: #9ca3af;
+  /* SNAGZ Centralized Brand Design Tokens - Premium Dark & Electric Blue */
+  --snagz-primary: #3b82f6;
+  --snagz-primary-hover: #2563eb;
+  --snagz-primary-light: #60a5fa;
+  --snagz-accent: #6366f1;
+  --snagz-bg: #0b0d13;
+  --snagz-surface: #111522;
+  --snagz-card: #161b2a;
+  --snagz-card-hover: #1d2438;
+  --snagz-border: #232c42;
+  --snagz-text: #f8fafc;
+  --snagz-text-muted: #94a3b8;
   --snagz-success: #10b981;
   --snagz-warning: #f59e0b;
-  --snagz-error: #f43f5e;
-  --snagz-deal-highlight: #f97316;
-  --snagz-free-highlight: #10b981;
+  --snagz-error: #ef4444;
+  --snagz-deal-highlight: #6366f1;
+  --snagz-free-highlight: #38bdf8;
 }
 
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: var(--snagz-bg);
-    color: var(--snagz-text);
+    background-color: #0b0d13;
+    color: #f8fafc;
   }
   
   code, pre, .font-mono {
@@ -39,15 +39,15 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: #0b0d13;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #262626;
+  background: #232c42;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #404040;
+  background: #334155;
 }
 

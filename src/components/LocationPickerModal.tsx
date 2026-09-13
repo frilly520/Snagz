@@ -43,11 +43,11 @@ export const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
       <div 
         id="location-picker-modal"
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md bg-neutral-900 border border-neutral-800 rounded-2xl p-6 shadow-2xl"
+        className="w-full max-w-md bg-[#0f1422] border border-[#222b3e] rounded-2xl p-6 shadow-2xl"
       >
-        <div className="flex items-center justify-between gap-4 mb-5 pb-3 border-b border-neutral-800">
+        <div className="flex items-center justify-between gap-4 mb-5 pb-3 border-b border-[#222b3e]">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+            <div className="p-2 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-400">
               <MapPin className="w-5 h-5" />
             </div>
             <div>
@@ -58,7 +58,7 @@ export const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-400 hover:text-white"
+            className="p-1.5 rounded-lg bg-[#1a2133] hover:bg-[#252f47] text-neutral-400 hover:text-white"
           >
             <X className="w-4 h-4" />
           </button>
@@ -73,7 +73,7 @@ export const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
                 value={zip}
                 onChange={(e) => setZip(e.target.value)}
                 placeholder="90210"
-                className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-white font-mono"
+                className="w-full px-3 py-2 rounded-xl bg-[#0b0e17] border border-[#222b3e] text-white font-mono focus:outline-none focus:border-blue-500"
               />
             </div>
             <div className="col-span-2">
@@ -87,7 +87,7 @@ export const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
                   setState(parts[1]?.trim() || '');
                 }}
                 placeholder="Los Angeles, CA"
-                className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-white"
+                className="w-full px-3 py-2 rounded-xl bg-[#0b0e17] border border-[#222b3e] text-white focus:outline-none focus:border-blue-500"
               />
             </div>
           </div>
@@ -106,8 +106,8 @@ export const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
                   }}
                   className={`px-2.5 py-1 rounded-lg border text-[11px] transition-colors ${
                     zip === loc.zip
-                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-bold'
-                      : 'bg-neutral-950 text-neutral-300 border-neutral-800 hover:border-neutral-700'
+                      ? 'bg-blue-500/20 text-blue-300 border-blue-500/40 font-bold'
+                      : 'bg-[#0b0e17] text-neutral-300 border-[#222b3e] hover:border-neutral-700'
                   }`}
                 >
                   {loc.city}, {loc.state} ({loc.zip})
@@ -116,17 +116,17 @@ export const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-2 pt-3 border-t border-neutral-800">
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#222b3e]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl bg-neutral-800 text-neutral-300 hover:text-white"
+              className="px-4 py-2 rounded-xl bg-[#141926] hover:bg-[#1f273b] text-neutral-300 hover:text-white"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-bold"
+              className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold"
             >
               Save Location
             </button>

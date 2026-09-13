@@ -292,11 +292,11 @@ export const PennyListView: React.FC<PennyListViewProps> = ({
         {/* ZIG Penny Advisor Callout Banner */}
         <div className="mt-5 pt-4 border-t border-neutral-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-neutral-950/50 p-3 rounded-xl">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-neutral-900 border border-emerald-500/40 flex items-center justify-center overflow-hidden shrink-0">
+            <div className="w-9 h-9 rounded-full bg-neutral-900 border border-blue-500/40 flex items-center justify-center overflow-hidden shrink-0">
               <ZigAvatar size={28} expression="confident" />
             </div>
             <div>
-              <span className="text-xs font-bold text-emerald-400">ZIG's Penny Radar Tip:</span>
+              <span className="text-xs font-bold text-blue-400">ZIG's Penny Radar Tip:</span>
               <p className="text-xs text-neutral-300">
                 Penny pricing can vary by location and may be corrected or removed by the retailer. Verify the price at checkout!
               </p>
@@ -306,7 +306,7 @@ export const PennyListView: React.FC<PennyListViewProps> = ({
           <button
             type="button"
             onClick={() => onAskZigAboutPenny && onAskZigAboutPenny("What are the best Dollar General penny items right now?")}
-            className="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 shrink-0 bg-emerald-950/40 border border-emerald-500/30 px-3 py-1.5 rounded-lg transition-colors"
+            className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 shrink-0 bg-blue-950/40 border border-blue-500/30 px-3 py-1.5 rounded-lg transition-colors"
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             <span>Ask ZIG about Penny Items →</span>

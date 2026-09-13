@@ -72,12 +72,12 @@ export const FinalPriceCalculatorModal: React.FC<FinalPriceCalculatorModalProps>
       <div 
         id="final-price-calculator-modal"
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-2xl bg-neutral-900 border border-neutral-800 rounded-2xl p-6 sm:p-7 shadow-2xl my-8 max-h-[90vh] overflow-y-auto"
+        className="relative w-full max-w-2xl bg-[#0f1422] border border-[#222b3e] rounded-2xl p-6 sm:p-7 shadow-2xl my-8 max-h-[90vh] overflow-y-auto"
       >
         {/* Header */}
-        <div className="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-neutral-800">
+        <div className="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-[#222b3e]">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+            <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-400">
               <Calculator className="w-6 h-6" />
             </div>
             <div>
@@ -89,7 +89,7 @@ export const FinalPriceCalculatorModal: React.FC<FinalPriceCalculatorModalProps>
             id="btn-close-calculator"
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-400 hover:text-white transition-colors"
+            className="p-2 rounded-xl bg-[#1a2133] hover:bg-[#252f47] text-neutral-400 hover:text-white transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -110,7 +110,7 @@ export const FinalPriceCalculatorModal: React.FC<FinalPriceCalculatorModalProps>
                 step="0.01"
                 value={originalPrice}
                 onChange={(e) => setOriginalPrice(parseFloat(e.target.value) || 0)}
-                className="w-full px-3.5 py-2 rounded-xl bg-neutral-950 border border-neutral-800 focus:border-emerald-500 focus:outline-none text-white font-mono text-base font-bold"
+                className="w-full px-3.5 py-2 rounded-xl bg-[#0b0e17] border border-[#222b3e] focus:border-blue-500 focus:outline-none text-white font-mono text-base font-bold"
               />
             </div>
 
@@ -126,7 +126,7 @@ export const FinalPriceCalculatorModal: React.FC<FinalPriceCalculatorModalProps>
                   max="100"
                   value={storeSalePercent}
                   onChange={(e) => setStoreSalePercent(parseFloat(e.target.value) || 0)}
-                  className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-white font-mono text-sm"
+                  className="w-full px-3 py-2 rounded-xl bg-[#0b0e17] border border-[#222b3e] text-white font-mono text-sm"
                 />
               </div>
               <div>
@@ -138,7 +138,7 @@ export const FinalPriceCalculatorModal: React.FC<FinalPriceCalculatorModalProps>
                   min="0"
                   value={storeSaleDollar}
                   onChange={(e) => setStoreSaleDollar(parseFloat(e.target.value) || 0)}
-                  className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-white font-mono text-sm"
+                  className="w-full px-3 py-2 rounded-xl bg-[#0b0e17] border border-[#222b3e] text-white font-mono text-sm"
                 />
               </div>
             </div>
@@ -155,7 +155,7 @@ export const FinalPriceCalculatorModal: React.FC<FinalPriceCalculatorModalProps>
                   max="100"
                   value={couponPercent}
                   onChange={(e) => setCouponPercent(parseFloat(e.target.value) || 0)}
-                  className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-white font-mono text-sm"
+                  className="w-full px-3 py-2 rounded-xl bg-[#0b0e17] border border-[#222b3e] text-white font-mono text-sm"
                 />
               </div>
               <div>
@@ -167,7 +167,7 @@ export const FinalPriceCalculatorModal: React.FC<FinalPriceCalculatorModalProps>
                   min="0"
                   value={couponDollar}
                   onChange={(e) => setCouponDollar(parseFloat(e.target.value) || 0)}
-                  className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-white font-mono text-sm"
+                  className="w-full px-3 py-2 rounded-xl bg-[#0b0e17] border border-[#222b3e] text-white font-mono text-sm"
                 />
               </div>
             </div>
@@ -183,7 +183,7 @@ export const FinalPriceCalculatorModal: React.FC<FinalPriceCalculatorModalProps>
                   min="0"
                   value={mfrCouponDollar}
                   onChange={(e) => setMfrCouponDollar(parseFloat(e.target.value) || 0)}
-                  className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-white font-mono text-sm"
+                  className="w-full px-3 py-2 rounded-xl bg-[#0b0e17] border border-[#222b3e] text-white font-mono text-sm"
                 />
               </div>
               <div>
@@ -197,19 +197,19 @@ export const FinalPriceCalculatorModal: React.FC<FinalPriceCalculatorModalProps>
                   step="0.5"
                   value={cashbackPercent}
                   onChange={(e) => setCashbackPercent(parseFloat(e.target.value) || 0)}
-                  className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-white font-mono text-sm"
+                  className="w-full px-3 py-2 rounded-xl bg-[#0b0e17] border border-[#222b3e] text-white font-mono text-sm"
                 />
               </div>
             </div>
 
             {/* Free Shipping Checkbox */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-neutral-950 border border-neutral-800 text-xs">
+            <div className="flex items-center justify-between p-3 rounded-xl bg-[#0b0e17] border border-[#222b3e] text-xs">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={freeShipping}
                   onChange={(e) => setFreeShipping(e.target.checked)}
-                  className="rounded border-neutral-700 text-emerald-500 focus:ring-emerald-500 bg-neutral-900"
+                  className="rounded border-neutral-700 text-blue-500 focus:ring-blue-500 bg-[#161c2c]"
                 />
                 <span className="text-neutral-300 font-medium">Free Shipping Applied</span>
               </label>
@@ -219,13 +219,13 @@ export const FinalPriceCalculatorModal: React.FC<FinalPriceCalculatorModalProps>
 
           {/* Results Summary Box */}
           {breakdown && (
-            <div className="flex flex-col justify-between p-5 rounded-2xl bg-neutral-950 border border-neutral-800">
+            <div className="flex flex-col justify-between p-5 rounded-2xl bg-[#0b0e17] border border-[#222b3e]">
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-bold uppercase tracking-wider text-neutral-400">
                     Live Calculation
                   </span>
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/40">
                     {breakdown.totalSavedPercentage}% Total Saved
                   </span>
                 </div>
@@ -239,18 +239,18 @@ export const FinalPriceCalculatorModal: React.FC<FinalPriceCalculatorModalProps>
                   {breakdown.components.map((comp, idx) => (
                     <div key={idx} className="flex items-center justify-between text-neutral-300">
                       <span>{comp.title}</span>
-                      <span className="text-emerald-400 font-semibold">-${comp.discountAmount.toFixed(2)}</span>
+                      <span className="text-blue-400 font-semibold">-${comp.discountAmount.toFixed(2)}</span>
                     </div>
                   ))}
 
                   {freeShipping && (
                     <div className="flex items-center justify-between text-neutral-300">
                       <span>Standard Shipping Waived</span>
-                      <span className="text-emerald-400 font-semibold">-${shippingCost.toFixed(2)}</span>
+                      <span className="text-blue-400 font-semibold">-${shippingCost.toFixed(2)}</span>
                     </div>
                   )}
 
-                  <div className="pt-2 border-t border-neutral-800 flex items-center justify-between font-bold text-neutral-200">
+                  <div className="pt-2 border-t border-[#222b3e] flex items-center justify-between font-bold text-neutral-200">
                     <span>Actual Checkout Price</span>
                     <span className="text-white font-sans text-sm">${breakdown.actualCheckoutPrice.toFixed(2)}</span>
                   </div>
@@ -258,16 +258,16 @@ export const FinalPriceCalculatorModal: React.FC<FinalPriceCalculatorModalProps>
               </div>
 
               {/* Final Effective Highlight Card */}
-              <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-950/60 to-neutral-900 border border-emerald-500/30">
-                <span className="text-xs text-emerald-400 font-medium block mb-1">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-blue-950/60 to-[#0f1422] border border-blue-500/30">
+                <span className="text-xs text-blue-400 font-medium block mb-1">
                   Estimated Effective Price (After Cashback Rebates):
                 </span>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-3xl font-black text-emerald-300 tracking-tight font-sans">
+                  <span className="text-3xl font-black text-blue-300 tracking-tight font-sans">
                     ${breakdown.estimatedEffectivePrice.toFixed(2)}
                   </span>
                   <span className="text-xs text-neutral-400 font-mono">
-                    Total Savings: <strong className="text-emerald-400 font-sans font-bold">${breakdown.totalSaved.toFixed(2)}</strong>
+                    Total Savings: <strong className="text-blue-400 font-sans font-bold">${breakdown.totalSaved.toFixed(2)}</strong>
                   </span>
                 </div>
               </div>

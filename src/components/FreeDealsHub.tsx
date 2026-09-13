@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Gift, ShieldCheck, Sparkles, Filter, CheckCircle2, Info } from 'lucide-react';
-import { Deal, FreeClassification } from '../types';
+import { Gift, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { Deal } from '../types';
 import { CouponCard } from './CouponCard';
 
 interface FreeDealsHubProps {
@@ -24,12 +24,12 @@ export const FreeDealsHub: React.FC<FreeDealsHubProps> = ({
 
   const categories = [
     { id: 'ALL', label: 'All Free Offers' },
-    { id: '$0_FREE', label: '$0 100% Free (No Purchase)' },
+    { id: '$0_FREE', label: '$0 100% Free' },
     { id: 'FREE_WITH_PURCHASE', label: 'Free w/ Purchase' },
     { id: 'FREE_TRIAL', label: 'Free Trials' },
     { id: 'FREE_SAMPLE', label: 'Free Samples' },
     { id: 'FREE_SHIPPING', label: 'Free Shipping' },
-    { id: 'NEARLY_FREE', label: 'Nearly Free (<$1)' }
+    { id: 'NEARLY_FREE', label: 'Under $1' }
   ];
 
   const filteredDeals = deals.filter(d => {
@@ -39,28 +39,28 @@ export const FreeDealsHub: React.FC<FreeDealsHubProps> = ({
   });
 
   return (
-    <div id="free-deals-hub" className="space-y-6">
-      {/* Hero Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-950/80 via-neutral-900 to-neutral-950 border border-emerald-500/30 p-6 sm:p-8">
-        <div className="relative z-10 max-w-2xl">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 mb-3">
+    <div id="free-deals-hub" className="space-y-5">
+      {/* Header Banner */}
+      <div className="rounded-xl bg-[#121624] border border-[#232c42] p-5 sm:p-6">
+        <div className="max-w-2xl">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 mb-2.5">
             <Gift className="w-3.5 h-3.5" />
-            <span>100% Free & Legitimate Discovery Engine</span>
+            <span>Verified $0 & Free Offers</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Verified Free Stuff, Trials & $0 Promotions
+          <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+            Free Stuff, Samples & $0 Promotions
           </h1>
-          <p className="text-sm text-neutral-300 mt-2 leading-relaxed">
-            Every offer is algorithmically audited to distinguish authentic <strong>$0 Free (No spend)</strong> from Free-with-Purchase, Free Trials, and Rebate Stacks. No fake surveys or hidden subscription traps.
+          <p className="text-xs sm:text-sm text-slate-400 mt-1.5 leading-relaxed">
+            Every promotion is verified to distinguish authentic <strong>$0 Free</strong> from Free-with-Purchase and Free Trials. No fake survey traps or scam websites.
           </p>
 
-          <div className="flex items-center gap-4 mt-4 text-xs text-neutral-400">
-            <span className="flex items-center gap-1 text-emerald-400 font-medium">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Zero Scam / Fake Survey Policy</span>
+          <div className="flex items-center gap-4 mt-3 text-xs text-slate-400">
+            <span className="flex items-center gap-1 text-slate-300 font-medium">
+              <ShieldCheck className="w-4 h-4 text-blue-400" />
+              <span>Zero-Scam Policy</span>
             </span>
-            <span className="flex items-center gap-1 text-neutral-300">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <span className="flex items-center gap-1 text-slate-300">
+              <CheckCircle2 className="w-4 h-4 text-blue-400" />
               <span>{filteredDeals.length} active verified offers</span>
             </span>
           </div>
@@ -68,7 +68,7 @@ export const FreeDealsHub: React.FC<FreeDealsHubProps> = ({
       </div>
 
       {/* Classification Filters Pill Bar */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
         {categories.map((cat) => {
           const isActive = selectedType === cat.id;
           return (
@@ -76,10 +76,10 @@ export const FreeDealsHub: React.FC<FreeDealsHubProps> = ({
               key={cat.id}
               type="button"
               onClick={() => setSelectedType(cat.id)}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
                 isActive
-                  ? 'bg-emerald-500 text-neutral-950 shadow-md shadow-emerald-950 font-bold'
-                  : 'bg-neutral-900/90 text-neutral-300 hover:text-white border border-neutral-800 hover:border-neutral-700'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-[#141926] text-slate-400 hover:text-white border border-[#222b3e]'
               }`}
             >
               <span>{cat.label}</span>
@@ -90,13 +90,13 @@ export const FreeDealsHub: React.FC<FreeDealsHubProps> = ({
 
       {/* Deals Grid */}
       {filteredDeals.length === 0 ? (
-        <div className="p-12 text-center rounded-2xl bg-neutral-900/60 border border-neutral-800">
-          <Gift className="w-12 h-12 text-neutral-600 mx-auto mb-3" />
-          <h3 className="font-bold text-white text-base">No active offers in this free category right now</h3>
-          <p className="text-xs text-neutral-400 mt-1">Our crawlers verify offers every 15 minutes. Check back soon!</p>
+        <div className="p-10 text-center rounded-xl bg-[#141926] border border-[#222b3e]">
+          <Gift className="w-10 h-10 text-slate-500 mx-auto mb-2" />
+          <h3 className="font-bold text-white text-sm">No active offers in this free category right now</h3>
+          <p className="text-xs text-slate-400 mt-1">Our crawlers update offers continuously. Check back soon!</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredDeals.map((deal) => (
             <CouponCard
               key={deal.id}

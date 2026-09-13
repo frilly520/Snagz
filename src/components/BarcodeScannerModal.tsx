@@ -87,12 +87,12 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
       <div 
         id="barcode-scanner-modal"
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-lg bg-neutral-900 border border-neutral-800 rounded-2xl p-6 shadow-2xl my-8 max-h-[90vh] overflow-y-auto"
+        className="relative w-full max-w-lg bg-[#0f1422] border border-[#222b3e] rounded-2xl p-6 shadow-2xl my-8 max-h-[90vh] overflow-y-auto"
       >
         {/* Header */}
-        <div className="flex items-center justify-between gap-4 mb-5 pb-3 border-b border-neutral-800">
+        <div className="flex items-center justify-between gap-4 mb-5 pb-3 border-b border-[#222b3e]">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+            <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-400">
               <ScanBarcode className="w-6 h-6" />
             </div>
             <div>
@@ -103,17 +103,17 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-400 hover:text-white"
+            className="p-2 rounded-xl bg-[#1a2133] hover:bg-[#252f47] text-neutral-400 hover:text-white"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Viewfinder animation representation */}
-        <div className="relative mb-5 p-6 rounded-2xl bg-neutral-950 border border-neutral-800 flex flex-col items-center justify-center overflow-hidden">
-          <div className="w-48 h-28 border-2 border-dashed border-emerald-500/60 rounded-xl relative flex items-center justify-center">
-            <ScanBarcode className="w-12 h-12 text-emerald-400/80" />
-            <div className="absolute inset-x-0 h-0.5 bg-emerald-400/80 shadow-lg shadow-emerald-400 animate-pulse"></div>
+        <div className="relative mb-5 p-6 rounded-2xl bg-[#0b0e17] border border-[#222b3e] flex flex-col items-center justify-center overflow-hidden">
+          <div className="w-48 h-28 border-2 border-dashed border-blue-500/60 rounded-xl relative flex items-center justify-center">
+            <ScanBarcode className="w-12 h-12 text-blue-400/80" />
+            <div className="absolute inset-x-0 h-0.5 bg-blue-400/80 shadow-lg shadow-blue-400 animate-pulse"></div>
           </div>
           <span className="text-xs text-neutral-400 mt-3 font-medium">Ready to scan physical barcode</span>
         </div>
@@ -127,7 +127,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                 key={idx}
                 type="button"
                 onClick={() => handleLookup(s.upc)}
-                className="w-full px-3 py-2 rounded-xl bg-neutral-950 hover:bg-neutral-800 border border-neutral-800 text-xs text-left flex items-center justify-between text-neutral-200 transition-colors"
+                className="w-full px-3 py-2 rounded-xl bg-[#0b0e17] hover:bg-[#1a2133] border border-[#222b3e] text-xs text-left flex items-center justify-between text-neutral-200 transition-colors"
               >
                 <div>
                   <span className="font-semibold block">{s.name}</span>
@@ -146,13 +146,13 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
             value={upcQuery}
             onChange={(e) => setUpcQuery(e.target.value)}
             placeholder="Or type 12-digit UPC barcode..."
-            className="flex-1 px-3.5 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-xs font-mono text-white placeholder-neutral-500 focus:border-emerald-500 focus:outline-none"
+            className="flex-1 px-3.5 py-2 rounded-xl bg-[#0b0e17] border border-[#222b3e] text-xs font-mono text-white placeholder-neutral-500 focus:border-blue-500 focus:outline-none"
           />
           <button
             type="button"
             disabled={activeScan || !upcQuery.trim()}
             onClick={() => handleLookup(upcQuery)}
-            className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-bold text-xs flex items-center gap-1.5 transition-colors"
+            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center gap-1.5 transition-colors"
           >
             <Search className="w-3.5 h-3.5" />
             <span>Check</span>
@@ -161,9 +161,9 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
 
         {/* Matched Result */}
         {matchedProduct && (
-          <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-xs">
+          <div className="p-4 rounded-xl bg-blue-950/40 border border-blue-500/40 text-xs">
             <div className="flex items-center justify-between gap-2 mb-2">
-              <span className="text-xs font-bold text-emerald-400 flex items-center gap-1">
+              <span className="text-xs font-bold text-blue-400 flex items-center gap-1">
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Found In Store Database</span>
               </span>
@@ -173,17 +173,17 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
             <h4 className="font-bold text-white text-sm mb-1">{matchedProduct.name}</h4>
             <div className="flex items-baseline gap-3 my-2">
               <span className="text-xs text-neutral-400 line-through font-mono">MSRP: ${matchedProduct.msrp.toFixed(2)}</span>
-              <span className="text-base font-extrabold text-emerald-400 font-mono">
+              <span className="text-base font-extrabold text-blue-400 font-mono">
                 Best Price: ${matchedProduct.bestPrice.toFixed(2)} at {matchedProduct.bestStore}
               </span>
             </div>
 
-            <div className="mt-3 pt-3 border-t border-neutral-800 space-y-1">
+            <div className="mt-3 pt-3 border-t border-[#222b3e] space-y-1">
               <span className="text-neutral-300 font-semibold block">Applicable Coupons & Promos:</span>
               {matchedProduct.availableCoupons.map((c: any, i: number) => (
                 <div key={i} className="flex items-center justify-between text-neutral-200">
-                  <span className="font-mono text-emerald-300 font-bold">{c.code}</span>
-                  <span className="text-emerald-400 font-semibold">{c.discount}</span>
+                  <span className="font-mono text-blue-300 font-bold">{c.code}</span>
+                  <span className="text-blue-400 font-semibold">{c.discount}</span>
                 </div>
               ))}
             </div>
@@ -197,7 +197,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                     onClose();
                     onSelectDeal(matchedProduct.dealId);
                   }}
-                  className="text-emerald-400 font-bold hover:underline"
+                  className="text-blue-400 font-bold hover:underline"
                 >
                   View Full Stack Breakdown →
                 </button>

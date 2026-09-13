@@ -1,27 +1,29 @@
 import React, { useState } from 'react';
 import { 
   Search, 
-  Sparkles, 
   MapPin, 
-  Calculator, 
-  Camera, 
-  ScanBarcode, 
-  Puzzle, 
-  ShieldAlert, 
-  Gift, 
+  Bell, 
+  PiggyBank, 
   SlidersHorizontal,
   X,
-  Bot,
-  Bell,
-  PiggyBank,
-  Settings,
   Store as StoreIcon,
+  Gift,
+  Bookmark,
+  Sparkles,
+  Flame,
+  MoreVertical,
+  Calculator,
+  Camera,
+  ScanBarcode,
+  Puzzle,
+  Settings,
+  ShieldAlert,
   Globe
 } from 'lucide-react';
 import { NaturalSearchIntent, SupportedCurrency } from '../types';
 import { SnagzLogo } from './SnagzLogo';
-import { PWAInstallButton } from './PWAInstallButton';
 import { ZigAvatar } from './ZigMascot';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface HeaderProps {
   searchQuery: string;
@@ -47,7 +49,6 @@ interface HeaderProps {
   onToggleFreeOnly: () => void;
   expiringOnly: boolean;
   onToggleExpiringOnly: () => void;
-  // Advanced Deal Intelligence props
   onOpenAlertsDrawer: () => void;
   alertsCount?: number;
   onOpenSavingsTracker: () => void;
@@ -89,69 +90,103 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenPrivacySettings,
   channelFilter,
   onChannelFilterChange,
-  currency,
   activeNavTab = 'home',
   onNavigateTab
 }) => {
+  const [showToolsMenu, setShowToolsMenu] = useState(false);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       onSearchSubmit(searchQuery);
     }
   };
 
-  return (
-    <header className="sticky top-0 z-40 bg-neutral-950/95 backdrop-blur-md border-b border-neutral-800/80 transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
-        {/* Main Row: Logo, Search Bar, Tool CTAs */}
-        <div className="flex items-center justify-between gap-3">
-          {/* Logo */}
-          <SnagzLogo 
-            onClick={() => onSelectCategory('All')} 
-            showTagline={true} 
-            size="md" 
-          />
+  const navItems: { id: 'home' | 'stores' | 'free' | 'penny' | 'saved'; label: string; icon: React.ReactNode; isPenny?: boolean }[] = [
+    { id: 'home', label: 'Deals', icon: <Flame className="w-4 h-4" /> },
+    { id: 'stores', label: 'Stores', icon: <StoreIcon className="w-4 h-4" /> },
+    { id: 'free', label: 'Free', icon: <Gift className="w-4 h-4" /> },
+    { id: 'penny', label: 'Penny Finds', icon: <span className="w-3.5 h-3.5 rounded-full bg-amber-400/20 text-amber-300 font-bold text-[9px] flex items-center justify-center font-mono border border-amber-400/50">1¢</span>, isPenny: true },
+    { id: 'saved', label: 'Saved', icon: <Bookmark className="w-4 h-4" /> },
+  ];
 
-          {/* Center Search Input */}
-          <div className="flex-1 max-w-2xl relative">
+  return (
+    <header className="sticky top-0 z-40 bg-[#0e121c]/95 backdrop-blur-md border-b border-[#1f2638] transition-all">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        {/* Top Header Row: Logo, Primary Search, Actions */}
+        <div className="flex items-center justify-between gap-3 sm:gap-6 py-3">
+          {/* Brand Logo */}
+          <div className="shrink-0">
+            <SnagzLogo 
+              onClick={() => {
+                onNavigateTab?.('home');
+                onSelectCategory('All');
+              }} 
+              showTagline={false} 
+              size="md" 
+            />
+          </div>
+
+          {/* Prominent Search Bar */}
+          <div className="flex-1 max-w-xl">
             <div className="relative flex items-center">
-              <Search className="w-4 h-4 text-neutral-400 absolute left-3.5" />
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
               <input
                 id="main-search-input"
                 type="text"
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder='Search products, stores, or ask: "AirPods Pro under $160", "Target diapers coupon"...'
-                className="w-full pl-9 pr-24 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 hover:border-neutral-700 focus:border-emerald-500 text-xs sm:text-sm text-white placeholder-neutral-500 focus:outline-none transition-all shadow-inner"
+                placeholder="Search deals, stores, or products..."
+                className="w-full pl-10 pr-20 py-2 sm:py-2.5 rounded-xl bg-[#141926] border border-[#222b3e] hover:border-[#2f3b54] focus:border-blue-500 text-sm text-slate-100 placeholder-slate-400 focus:outline-none transition-colors"
               />
+              {searchQuery ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onSearchChange('');
+                    onClearNaturalIntent();
+                  }}
+                  className="absolute right-10 text-slate-400 hover:text-white p-1"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              ) : null}
               <button
                 id="btn-search-ai"
                 type="button"
                 onClick={() => onSearchSubmit(searchQuery)}
-                className="absolute right-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-neutral-950 text-xs font-bold transition-all flex items-center gap-1 border border-emerald-500/30"
+                className="absolute right-1.5 px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors"
               >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Best Deal</span>
+                Search
               </button>
             </div>
           </div>
 
-          {/* Right Action Tools Bar */}
-          <div className="flex items-center gap-1.5 shrink-0">
-            {/* PWA In-App Install Prompt */}
-            <PWAInstallButton compact={true} />
+          {/* Quick Right Utilities */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* Location Chip */}
+            <button
+              id="btn-open-location"
+              type="button"
+              onClick={onOpenLocationPicker}
+              title={`Location: ${currentLocation.city}, ${currentLocation.state} (${currentLocation.zip})`}
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#141926] hover:bg-[#1a2133] border border-[#222b3e] text-xs text-slate-300 hover:text-white transition-colors"
+            >
+              <MapPin className="w-3.5 h-3.5 text-blue-400" />
+              <span>{currentLocation.city}, {currentLocation.state}</span>
+            </button>
 
-            {/* Price Drop Alerts Bell */}
+            {/* Price Drop Alerts */}
             <button
               id="btn-open-price-alerts-header"
               type="button"
               onClick={onOpenAlertsDrawer}
-              title="Price Drop + Coupon Combination Alerts"
-              className="relative p-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 hover:text-white transition-colors"
+              title="Price Drop Alerts"
+              className="relative p-2 rounded-lg bg-[#141926] hover:bg-[#1a2133] border border-[#222b3e] text-slate-300 hover:text-white transition-colors"
             >
-              <Bell className="w-4 h-4 text-amber-400" />
+              <Bell className="w-4 h-4" />
               {alertsCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-500 text-neutral-950 text-[9px] font-black flex items-center justify-center animate-pulse">
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-blue-600 text-white text-[9px] font-bold flex items-center justify-center">
                   {alertsCount}
                 </span>
               )}
@@ -162,321 +197,221 @@ export const Header: React.FC<HeaderProps> = ({
               id="btn-open-savings-tracker-header"
               type="button"
               onClick={onOpenSavingsTracker}
-              title="Personal Savings Tracker & Milestones"
-              className="p-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 hover:text-white transition-colors"
+              title="Savings Tracker"
+              className="hidden sm:flex p-2 rounded-lg bg-[#141926] hover:bg-[#1a2133] border border-[#222b3e] text-slate-300 hover:text-white transition-colors"
             >
               <PiggyBank className="w-4 h-4 text-emerald-400" />
             </button>
 
-            {/* ZIG — Your Deal Hunter */}
+            {/* ZIG Deal Assistant */}
             <button
               id="btn-open-assistant"
               type="button"
               onClick={onOpenAiAssistant}
-              aria-label="ZIG — Your Deal Hunter"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-emerald-500/40 hover:border-emerald-400 text-white font-bold text-xs shadow-md transition-all group"
+              aria-label="Ask ZIG Deal Hunter"
+              className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#141926] hover:bg-[#1a2133] border border-blue-500/30 hover:border-blue-400/50 text-slate-200 text-xs font-semibold transition-colors"
             >
-              <div className="relative flex items-center justify-center">
-                <ZigAvatar size={22} expression="confident" />
-                <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              </div>
-              <span className="text-emerald-400 font-black tracking-wide">ZIG</span>
-              <span className="hidden lg:inline text-[10px] text-neutral-400 font-normal">Deal Hunter</span>
+              <ZigAvatar size={18} expression="confident" />
+              <span className="text-blue-400 font-bold">ZIG</span>
             </button>
 
-            {/* Stack Calculator */}
-            <button
-              id="btn-open-calculator-header"
-              type="button"
-              onClick={onOpenCalculator}
-              title="Stacking Calculator"
-              className="p-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 hover:text-white transition-colors"
-            >
-              <Calculator className="w-4 h-4 text-sky-400" />
-            </button>
+            {/* More Tools Dropdown */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowToolsMenu(!showToolsMenu)}
+                title="Tools & Settings"
+                className="p-2 rounded-lg bg-[#141926] hover:bg-[#1a2133] border border-[#222b3e] text-slate-300 hover:text-white transition-colors"
+              >
+                <MoreVertical className="w-4 h-4" />
+              </button>
 
-            {/* Receipt Scanner */}
-            <button
-              id="btn-open-receipt-scanner-header"
-              type="button"
-              onClick={onOpenReceiptScanner}
-              title="AI Receipt Scanner"
-              className="p-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 hover:text-white transition-colors"
-            >
-              <Camera className="w-4 h-4 text-emerald-400" />
-            </button>
+              {showToolsMenu && (
+                <div 
+                  className="absolute right-0 mt-2 w-56 rounded-xl bg-[#141926] border border-[#222b3e] shadow-2xl py-1.5 z-50 text-xs text-slate-300"
+                  onClick={() => setShowToolsMenu(false)}
+                >
+                  <button
+                    type="button"
+                    onClick={onOpenCalculator}
+                    className="w-full px-3.5 py-2 flex items-center gap-2.5 hover:bg-[#1f2638] text-left transition-colors"
+                  >
+                    <Calculator className="w-4 h-4 text-blue-400" />
+                    <span>Stacking Calculator</span>
+                  </button>
 
-            {/* In-store Barcode */}
-            <button
-              id="btn-open-barcode-scanner-header"
-              type="button"
-              onClick={onOpenBarcodeScanner}
-              title="In-Store Barcode Lookup"
-              className="hidden lg:flex p-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 hover:text-white transition-colors"
-            >
-              <ScanBarcode className="w-4 h-4 text-amber-400" />
-            </button>
+                  <button
+                    type="button"
+                    onClick={onOpenReceiptScanner}
+                    className="w-full px-3.5 py-2 flex items-center gap-2.5 hover:bg-[#1f2638] text-left transition-colors"
+                  >
+                    <Camera className="w-4 h-4 text-emerald-400" />
+                    <span>AI Receipt Scanner</span>
+                  </button>
 
-            {/* Extension preview */}
-            <button
-              id="btn-open-extension-header"
-              type="button"
-              onClick={onOpenExtensionModal}
-              title="Browser Extension Preview"
-              className="hidden xl:flex p-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 hover:text-white transition-colors"
-            >
-              <Puzzle className="w-4 h-4 text-purple-400" />
-            </button>
+                  <button
+                    type="button"
+                    onClick={onOpenBarcodeScanner}
+                    className="w-full px-3.5 py-2 flex items-center gap-2.5 hover:bg-[#1f2638] text-left transition-colors"
+                  >
+                    <ScanBarcode className="w-4 h-4 text-amber-400" />
+                    <span>Barcode Scanner</span>
+                  </button>
 
-            {/* Location Pill */}
-            <button
-              id="btn-open-location"
-              type="button"
-              onClick={onOpenLocationPicker}
-              title={`Shopping location: ${currentLocation.city}, ${currentLocation.state} (${currentLocation.zip})`}
-              className="hidden lg:flex items-center gap-1.5 px-2.5 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-xs text-neutral-300 hover:text-white transition-colors"
-            >
-              <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-              <span>{currentLocation.city}</span>
-            </button>
+                  <button
+                    type="button"
+                    onClick={onOpenExtensionModal}
+                    className="w-full px-3.5 py-2 flex items-center gap-2.5 hover:bg-[#1f2638] text-left transition-colors"
+                  >
+                    <Puzzle className="w-4 h-4 text-purple-400" />
+                    <span>Browser Extension</span>
+                  </button>
 
-            {/* Privacy & Settings */}
-            <button
-              id="btn-open-privacy-settings-header"
-              type="button"
-              onClick={onOpenPrivacySettings}
-              title="Privacy, Currency & Settings"
-              className="p-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-400 hover:text-white transition-colors"
-            >
-              <Settings className="w-4 h-4" />
-            </button>
+                  <div className="my-1 border-t border-[#222b3e]" />
 
-            {/* Admin Toggle */}
-            <button
-              id="btn-toggle-admin-header"
-              type="button"
-              onClick={onOpenAdmin}
-              title="Admin & Pipeline Telemetry"
-              className={`p-2 rounded-xl border transition-colors ${
-                isAdminActive 
-                  ? 'bg-rose-500/20 text-rose-300 border-rose-500/40' 
-                  : 'bg-neutral-900 hover:bg-neutral-800 border-neutral-800 text-neutral-400 hover:text-white'
-              }`}
-            >
-              <ShieldAlert className="w-4 h-4 text-rose-400" />
-            </button>
+                  <button
+                    type="button"
+                    onClick={onOpenPrivacySettings}
+                    className="w-full px-3.5 py-2 flex items-center gap-2.5 hover:bg-[#1f2638] text-left transition-colors"
+                  >
+                    <Settings className="w-4 h-4 text-slate-400" />
+                    <span>Settings & Currency</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={onOpenAdmin}
+                    className="w-full px-3.5 py-2 flex items-center gap-2.5 hover:bg-[#1f2638] text-left transition-colors"
+                  >
+                    <ShieldAlert className="w-4 h-4 text-rose-400" />
+                    <span>{isAdminActive ? 'Exit Admin Mode' : 'Admin Operations'}</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <PWAInstallButton compact={true} />
           </div>
         </div>
 
-        {/* Natural Language Intent Banner */}
+        {/* Natural Language Intent Bar (if active) */}
         {naturalIntent && (
-          <div className="mt-2.5 p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/30 flex items-center justify-between text-xs text-emerald-300">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-bold flex items-center gap-1 text-emerald-400">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Interpreted:</span>
-              </span>
-              <span>"{naturalIntent.understoodQuery}"</span>
+          <div className="mb-2 px-3 py-2 rounded-lg bg-blue-950/40 border border-blue-500/30 flex items-center justify-between text-xs text-blue-200">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+              <span>Interpreted: <strong className="text-white">"{naturalIntent.understoodQuery}"</strong></span>
               {naturalIntent.aiExplanation && (
-                <span className="text-[11px] text-neutral-400">({naturalIntent.aiExplanation})</span>
+                <span className="text-slate-400 hidden sm:inline">({naturalIntent.aiExplanation})</span>
               )}
             </div>
             <button
               type="button"
               onClick={onClearNaturalIntent}
-              className="text-neutral-400 hover:text-white p-1 rounded hover:bg-neutral-800"
+              className="text-slate-400 hover:text-white p-1"
             >
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
         )}
 
-        {/* Primary Section Navigation Tabs */}
-        <div className="mt-2.5 pt-2 border-t border-neutral-900 flex items-center justify-between gap-2 overflow-x-auto scrollbar-none">
-          <div className="flex items-center gap-1.5 shrink-0">
-            <button
-              id="header-nav-all-deals"
-              type="button"
-              onClick={() => {
-                onNavigateTab?.('home');
-                onSelectCategory('All');
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-                activeNavTab === 'home' && selectedCategory === 'All' && !freeOnly
-                  ? 'bg-emerald-500 text-neutral-950 shadow-sm'
-                  : 'bg-neutral-900 text-neutral-300 hover:text-white border border-neutral-800'
-              }`}
-            >
-              <span>🔥 All Deals</span>
-            </button>
+        {/* Main Desktop Navigation: Deals, Stores, Free, Penny Finds, Saved */}
+        <div className="hidden md:flex items-center justify-between py-2 border-t border-[#1a2133]">
+          <nav className="flex items-center gap-1">
+            {navItems.map((item) => {
+              const isActive = activeNavTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  id={`nav-link-${item.id}`}
+                  type="button"
+                  onClick={() => {
+                    onNavigateTab?.(item.id);
+                    if (item.id === 'home') {
+                      onSelectCategory('All');
+                    }
+                  }}
+                  className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                    isActive
+                      ? item.isPenny
+                        ? 'bg-amber-400/15 text-amber-300 border border-amber-400/30'
+                        : 'bg-blue-600/15 text-blue-400 border border-blue-500/30'
+                      : 'text-slate-400 hover:text-slate-100 hover:bg-[#141926]'
+                  }`}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
 
-            {/* First-class Penny List Section */}
-            <button
-              id="header-nav-penny-list"
-              type="button"
-              onClick={() => onNavigateTab?.('penny')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap transition-all flex items-center gap-1.5 ${
-                activeNavTab === 'penny'
-                  ? 'bg-amber-400 text-neutral-950 shadow-md shadow-amber-950/40'
-                  : 'bg-amber-950/40 text-amber-300 hover:text-amber-200 border border-amber-500/40 hover:bg-amber-900/50'
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-              <span>1¢ PENNY LIST</span>
-            </button>
+          {/* Quick Filters / Controls */}
+          <div className="flex items-center gap-2">
+            {/* In-Store vs Online Channel */}
+            <div className="flex items-center gap-1 bg-[#141926] border border-[#222b3e] rounded-lg px-2 py-1 text-xs">
+              <Globe className="w-3.5 h-3.5 text-slate-400" />
+              <select
+                id="select-channel-filter"
+                value={channelFilter}
+                onChange={(e) => onChannelFilterChange(e.target.value)}
+                className="bg-transparent text-slate-300 focus:outline-none text-xs cursor-pointer"
+              >
+                <option value="ALL" className="bg-[#141926]">All Channels</option>
+                <option value="ONLINE" className="bg-[#141926]">Online Only</option>
+                <option value="IN_STORE" className="bg-[#141926]">In-Store Local</option>
+              </select>
+            </div>
 
-            <button
-              id="header-nav-free"
-              type="button"
-              onClick={() => onNavigateTab?.('free')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-                activeNavTab === 'free' || freeOnly
-                  ? 'bg-emerald-500 text-neutral-950 shadow-sm'
-                  : 'bg-neutral-900 text-neutral-300 hover:text-white border border-neutral-800'
-              }`}
-            >
-              <Gift className="w-3.5 h-3.5" />
-              <span>$0 FREE Offers</span>
-            </button>
-
-            <button
-              id="header-nav-stores"
-              type="button"
-              onClick={() => onNavigateTab?.('stores')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-                activeNavTab === 'stores'
-                  ? 'bg-emerald-500 text-neutral-950 shadow-sm'
-                  : 'bg-neutral-900 text-neutral-300 hover:text-white border border-neutral-800'
-              }`}
-            >
-              <StoreIcon className="w-3.5 h-3.5" />
-              <span>Popular Stores</span>
-            </button>
-
-            <button
-              id="header-nav-saved"
-              type="button"
-              onClick={() => onNavigateTab?.('saved')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-                activeNavTab === 'saved'
-                  ? 'bg-emerald-500 text-neutral-950 shadow-sm'
-                  : 'bg-neutral-900 text-neutral-300 hover:text-white border border-neutral-800'
-              }`}
-            >
-              <Bell className="w-3.5 h-3.5" />
-              <span>Saved & Lists</span>
-            </button>
+            {/* Sort Dropdown */}
+            <div className="flex items-center gap-1 bg-[#141926] border border-[#222b3e] rounded-lg px-2 py-1 text-xs">
+              <SlidersHorizontal className="w-3.5 h-3.5 text-slate-400" />
+              <select
+                id="select-sort-deals"
+                value={sortOption}
+                onChange={(e) => onSortChange(e.target.value)}
+                className="bg-transparent text-slate-300 focus:outline-none text-xs cursor-pointer"
+              >
+                <option value="best_deal" className="bg-[#141926]">Best Deals First</option>
+                <option value="money_maker" className="bg-[#141926]">Money Makers</option>
+                <option value="lowest_net" className="bg-[#141926]">Lowest Price</option>
+                <option value="biggest_savings" className="bg-[#141926]">Biggest Savings ($)</option>
+                <option value="highest_discount" className="bg-[#141926]">Highest % Off</option>
+                <option value="newest" className="bg-[#141926]">Newest</option>
+              </select>
+            </div>
           </div>
-
-          {/* Location indicator button */}
-          <button
-            type="button"
-            onClick={onOpenLocationPicker}
-            className="flex items-center gap-1 text-[11px] text-neutral-400 hover:text-white transition-colors bg-neutral-900/60 px-2 py-1 rounded-lg border border-neutral-800/80 shrink-0"
-          >
-            <MapPin className="w-3 h-3 text-emerald-400" />
-            <span>{currentLocation.city}, {currentLocation.state} ({currentLocation.zip})</span>
-          </button>
         </div>
 
-        {/* Sub-bar: Category Pills & Sort Select */}
-        <div className="mt-3 flex items-center justify-between gap-4 overflow-x-auto scrollbar-none pb-1">
-          {/* Category Pills */}
-          <div className="flex items-center gap-1.5 shrink-0">
+        {/* Categories Bar (clean horizontal scroll) */}
+        {activeNavTab === 'home' && (
+          <div className="flex items-center gap-1.5 overflow-x-auto py-2 border-t border-[#1a2133] scrollbar-none">
             <button
               type="button"
               onClick={() => onSelectCategory('All')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
-                selectedCategory === 'All'
-                  ? 'bg-emerald-500 text-neutral-950 font-bold'
-                  : 'bg-neutral-900 text-neutral-400 hover:text-white border border-neutral-800'
+              className={`px-3 py-1 rounded-md text-xs whitespace-nowrap transition-colors ${
+                selectedCategory === 'All' && !freeOnly && !expiringOnly
+                  ? 'bg-blue-600 text-white font-semibold'
+                  : 'bg-[#141926] text-slate-400 hover:text-white border border-[#222b3e]'
               }`}
             >
               All Deals
             </button>
-
             {categories.map((c) => (
               <button
                 key={c.name}
                 type="button"
                 onClick={() => onSelectCategory(c.name)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`px-3 py-1 rounded-md text-xs whitespace-nowrap transition-colors ${
                   selectedCategory === c.name
-                    ? 'bg-emerald-500 text-neutral-950 font-bold'
-                    : 'bg-neutral-900 text-neutral-400 hover:text-white border border-neutral-800'
+                    ? 'bg-blue-600 text-white font-semibold'
+                    : 'bg-[#141926] text-slate-400 hover:text-white border border-[#222b3e]'
                 }`}
               >
                 {c.name}
               </button>
             ))}
           </div>
-
-          {/* Filter & Sort Controls */}
-          <div className="flex items-center gap-2 shrink-0">
-            {/* Channel Filter (Online vs In Store) */}
-            <div className="flex items-center gap-1 bg-neutral-900 border border-neutral-800 rounded-xl px-2 py-1 text-xs">
-              <Globe className="w-3.5 h-3.5 text-neutral-500" />
-              <select
-                id="select-channel-filter"
-                value={channelFilter}
-                onChange={(e) => onChannelFilterChange(e.target.value)}
-                className="bg-transparent text-neutral-300 focus:outline-none text-xs font-medium cursor-pointer"
-              >
-                <option value="ALL" className="bg-neutral-900">All Channels</option>
-                <option value="ONLINE" className="bg-neutral-900">Online Only</option>
-                <option value="IN_STORE" className="bg-neutral-900">In-Store Local</option>
-              </select>
-            </div>
-
-            {/* 100% Free Toggle */}
-            <button
-              type="button"
-              onClick={onToggleFreeOnly}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border ${
-                freeOnly
-                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50'
-                  : 'bg-neutral-900 text-neutral-400 border-neutral-800 hover:text-white'
-              }`}
-            >
-              <Gift className="w-3.5 h-3.5" />
-              <span>$0 Free Offers</span>
-            </button>
-
-            {/* Expiring Soon Toggle */}
-            <button
-              type="button"
-              onClick={onToggleExpiringOnly}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border ${
-                expiringOnly
-                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/50'
-                  : 'bg-neutral-900 text-neutral-400 border-neutral-800 hover:text-white'
-              }`}
-            >
-              <span>Ending Soon</span>
-            </button>
-
-            {/* Sort selector */}
-            <div className="flex items-center gap-1 bg-neutral-900 border border-neutral-800 rounded-xl px-2 py-1 text-xs">
-              <SlidersHorizontal className="w-3.5 h-3.5 text-neutral-500" />
-              <select
-                id="select-sort-deals"
-                value={sortOption}
-                onChange={(e) => onSortChange(e.target.value)}
-                className="bg-transparent text-neutral-300 focus:outline-none text-xs font-medium cursor-pointer"
-              >
-                <option value="best_deal" className="bg-neutral-900">Best Deal Engine (Math Rank #1)</option>
-                <option value="money_maker" className="bg-neutral-900">💰 Money Makers (Rewards &gt; Register Cost)</option>
-                <option value="lowest_net" className="bg-neutral-900">🎯 Lowest Effective Net Cost ($)</option>
-                <option value="biggest_savings" className="bg-neutral-900">Biggest Savings ($)</option>
-                <option value="highest_discount" className="bg-neutral-900">Highest % Off</option>
-                <option value="newest" className="bg-neutral-900">Newest Discovered</option>
-                <option value="expiring_soon" className="bg-neutral-900">Expiring Soon</option>
-                <option value="most_popular" className="bg-neutral-900">Most Popular</option>
-                <option value="recently_verified" className="bg-neutral-900">Recently Verified</option>
-              </select>
-            </div>
-          </div>
-        </div>
+        )}
       </div>
     </header>
   );

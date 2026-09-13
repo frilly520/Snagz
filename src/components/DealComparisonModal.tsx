@@ -62,13 +62,13 @@ export const DealComparisonModal: React.FC<DealComparisonModalProps> = ({
                 key={deal.id}
                 className={`relative rounded-2xl p-5 flex flex-col justify-between transition-all ${
                   isBest 
-                    ? 'bg-neutral-950 border-2 border-emerald-500 shadow-lg shadow-emerald-950/40'
-                    : 'bg-neutral-950/60 border border-neutral-800'
+                    ? 'bg-[#0f1422] border-2 border-blue-500/80 shadow-lg shadow-blue-950/40'
+                    : 'bg-[#0e121d] border border-[#1e2638]'
                 }`}
               >
                 {/* Best Choice Badge */}
                 {isBest && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-emerald-500 text-neutral-950 font-black text-xs tracking-wider uppercase flex items-center gap-1 shadow">
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-blue-600 text-white font-bold text-xs tracking-wider uppercase flex items-center gap-1 shadow">
                     <Award className="w-3.5 h-3.5" />
                     <span>Best Deal Overall</span>
                   </div>
@@ -77,7 +77,7 @@ export const DealComparisonModal: React.FC<DealComparisonModalProps> = ({
                 <div>
                   {/* Retailer Info */}
                   <div className="flex items-center gap-3 mb-3 pt-1">
-                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-neutral-900 border border-neutral-800 p-1 shrink-0 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-[#161c2c] border border-[#263147] p-1 shrink-0 flex items-center justify-center">
                       <img 
                         src={deal.storeLogo} 
                         alt={deal.storeName} 
@@ -97,20 +97,20 @@ export const DealComparisonModal: React.FC<DealComparisonModalProps> = ({
                   </h4>
 
                   {/* Effective Price Callout */}
-                  <div className="p-3 rounded-xl bg-neutral-900/90 border border-neutral-800 mb-4 text-center">
+                  <div className="p-3 rounded-xl bg-[#141a28] border border-[#222b3e] mb-4 text-center">
                     <span className="text-[10px] text-neutral-400 block uppercase font-mono tracking-wider">Effective Net Price</span>
-                    <span className={`text-2xl font-black font-mono ${isBest ? 'text-emerald-400' : 'text-white'}`}>
+                    <span className={`text-2xl font-black font-mono ${isBest ? 'text-blue-400' : 'text-white'}`}>
                       ${effPrice.toFixed(2)}
                     </span>
                     {savings > 0 && (
-                      <span className="text-xs text-emerald-400 font-mono block mt-0.5">
+                      <span className="text-xs text-blue-400 font-mono block mt-0.5">
                         Save ${savings.toFixed(2)} ({deal.estimatedSavingsPercent || Math.round((savings / regPrice) * 100)}%)
                       </span>
                     )}
                   </div>
 
                   {/* Feature Breakdown Table */}
-                  <div className="space-y-2 text-xs font-mono mb-5 border-t border-neutral-800/80 pt-3">
+                  <div className="space-y-2 text-xs font-mono mb-5 border-t border-[#1e2638] pt-3">
                     <div className="flex items-center justify-between text-neutral-400">
                       <span>Regular Price:</span>
                       <span className="text-neutral-200">${regPrice.toFixed(2)}</span>
@@ -123,7 +123,7 @@ export const DealComparisonModal: React.FC<DealComparisonModalProps> = ({
 
                     <div className="flex items-center justify-between text-neutral-400">
                       <span>Coupon Code:</span>
-                      <span className="text-emerald-400 font-bold">{deal.code || 'None needed'}</span>
+                      <span className="text-blue-400 font-bold">{deal.code || 'None needed'}</span>
                     </div>
 
                     <div className="flex items-center justify-between text-neutral-400">
@@ -149,11 +149,11 @@ export const DealComparisonModal: React.FC<DealComparisonModalProps> = ({
                 </div>
 
                 {/* Actions */}
-                <div className="space-y-2 pt-3 border-t border-neutral-800">
+                <div className="space-y-2 pt-3 border-t border-[#1e2638]">
                   <button
                     type="button"
                     onClick={() => onSelectDeal(deal)}
-                    className="w-full py-2 px-3 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-200 font-semibold text-xs transition-colors"
+                    className="w-full py-2 px-3 rounded-xl bg-[#1a2133] hover:bg-[#232d44] text-neutral-200 font-semibold text-xs transition-colors"
                   >
                     View Breakdown & DNA
                   </button>
@@ -163,8 +163,8 @@ export const DealComparisonModal: React.FC<DealComparisonModalProps> = ({
                     rel="noopener noreferrer"
                     className={`w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition-all shadow ${
                       isBest 
-                        ? 'bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-black' 
-                        : 'bg-neutral-700 hover:bg-neutral-600 text-white'
+                        ? 'bg-blue-600 hover:bg-blue-500 text-white font-black' 
+                        : 'bg-neutral-800 hover:bg-neutral-700 text-white'
                     }`}
                   >
                     <span>Get Deal</span>
