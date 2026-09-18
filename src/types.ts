@@ -938,3 +938,260 @@ export interface PennyReportSubmission {
   notes?: string;
   submitterEmail?: string;
 }
+
+// -------------------------------------------------------------
+// HIDE DEALS TYPES
+// -------------------------------------------------------------
+export type HideDealReason = 
+  | 'Not interested'
+  | 'Wrong store'
+  | 'Already bought it'
+  | 'Not relevant'
+  | 'Other';
+
+export interface HiddenDealItem {
+  dealId: string;
+  dealTitle?: string;
+  storeName?: string;
+  storeLogo?: string;
+  price?: number;
+  originalPrice?: number;
+  reason?: HideDealReason;
+  hiddenAt: string; // ISO date string
+}
+
+// -------------------------------------------------------------
+// VERIFIED PROMO CODES TYPES
+// -------------------------------------------------------------
+export type PromoCodeStatus = 'VERIFIED' | 'UNVERIFIED' | 'EXPIRED';
+
+export type PromoCodeCategoryFilter = 
+  | 'All'
+  | '20%+ Off'
+  | '$ Off'
+  | 'Free Shipping'
+  | 'New Customers'
+  | 'Clearance'
+  | 'Expiring Soon';
+
+export interface PromoCode {
+  id: string;
+  storeName: string;
+  storeSlug: string;
+  storeLogo: string;
+  storeUrl: string; // Real retailer destination website
+  code: string;
+  discount: string; // e.g. "20% OFF", "$50 OFF", "Free Next-Day Shipping"
+  discountType: 'PERCENT_OFF' | 'DOLLAR_OFF' | 'FREE_SHIPPING' | 'NEW_CUSTOMER' | 'CLEARANCE';
+  discountValue?: number; // e.g. 20 or 50
+  minPurchase?: number; // e.g. 50 (if applicable)
+  description: string;
+  restrictions?: string;
+  expirationDate?: string;
+  lastVerified: string; // e.g. "2 hours ago", "Today"
+  lastVerifiedTimestamp: number;
+  verificationStatus: PromoCodeStatus;
+  verificationSource: 'OFFICIAL_PROMOTION_PAGE' | 'RETAILER_DIRECT_API' | 'PARTNER_AFFILIATE_FEED' | 'AUTOMATED_CHECKOUT_VALIDATION' | 'COMMUNITY_SUBMISSION';
+  verificationEvidence?: string;
+  isStaffPick?: boolean;
+}
+
+// -------------------------------------------------------------
+// UNIVERSAL PRICE FINDER TYPES
+// -------------------------------------------------------------
+export type PriceFinderSellerType = 'OFFICIAL_RETAILER' | 'AUTHORIZED_DEALER' | 'MARKETPLACE_SELLER';
+export type PriceFinderCondition = 'NEW' | 'REFURBISHED' | 'OPEN_BOX';
+export type PriceFinderStockStatus = 'IN_STOCK' | 'LOW_STOCK' | 'OUT_OF_STOCK';
+
+export interface PriceFinderListing {
+  id: string;
+  retailerId: string;
+  retailerName: string;
+  retailerDomain: string;
+  retailerLogo: string;
+  directUrl: string;
+  sellerType: PriceFinderSellerType;
+  sellerName?: string;
+  condition: PriceFinderCondition;
+  itemPrice: number | null;
+  currency?: string;
+  shippingPrice: number | null; // 0 for free, null if unknown
+  shippingNote?: string | null;
+  requiredFees: number;
+  couponCode?: string;
+  couponDiscount: number;
+  rebateDiscount: number;
+  cashbackPercentage?: number;
+  estimatedTotal: number | null;
+  stockStatus: PriceFinderStockStatus | null;
+  lastChecked: string;
+  lastCheckedTimestamp: number;
+  isCheapest?: boolean;
+  dataSourceType?: 'LIVE_WEB' | 'LOCAL_CATALOG' | 'ESTIMATED';
+  isEstimated?: boolean;
+  sourceUrl?: string;
+  sourceProvider?: string;
+}
+
+export type PriceFinderDealScoreRating = 'AMAZING_DEAL' | 'GOOD_DEAL' | 'FAIR_PRICE' | 'POOR_DEAL';
+
+export interface SnagzDealScore {
+  rating: PriceFinderDealScoreRating;
+  label: string; // e.g. "🔥 Amazing Deal", "🟢 Good Deal", "🟡 Fair Price", "🔴 Poor Deal"
+  explanation: string; // e.g. "23% below typical price for comparable products."
+  historyConfidence: 'SUFFICIENT' | 'INSUFFICIENT';
+  historyNote?: string;
+}
+
+export interface VehicleCompatibilityInfo {
+  isVehiclePart: boolean;
+  year?: string;
+  make?: string;
+  model?: string;
+  engine?: string;
+  drivetrain?: string;
+  partType?: string;
+  compatibilityStatus: 'CONFIRMED_FIT' | 'NEEDS_VERIFICATION' | 'UNIVERSAL';
+  fitmentNote: string;
+}
+
+export interface AiShoppingAdvisorAnalysis {
+  isGoodDeal: boolean;
+  verdictHeadline: string;
+  bestOverallValue: string;
+  reasoning: string;
+  unitEconomicsNote?: string;
+  couponTip?: string;
+  worthPayingMore?: string;
+  cheaperEquivalent?: string;
+}
+
+export interface PriceFinderSimilarProduct {
+  id: string;
+  title: string;
+  brand?: string;
+  image: string;
+  lowestPrice: number;
+  unitDisplay?: string;
+  dealScore?: PriceFinderDealScoreRating;
+  type?: 'CHEAPER_ALTERNATIVE' | 'PREMIUM_ALTERNATIVE' | 'DIFFERENT_BRAND' | 'DIFFERENT_SIZE' | 'COMPARABLE' | string;
+  differenceReason: string;
+  directUrl?: string;
+  retailerName?: string;
+}
+
+export interface PriceFinderProduct {
+  id: string;
+  title: string;
+  brand: string;
+  modelNumber?: string;
+  upc: string;
+  gtin?: string;
+  mpn?: string;
+  sku?: string;
+  category: string;
+  image: string;
+  specs: Record<string, string>;
+  variants?: {
+    name: string;
+    options: string[];
+    selected: string;
+  }[];
+  unitPriceMetric?: {
+    unitName: string;
+    unitValue: number;
+    unitDisplay: string;
+    advantageNote?: string;
+  };
+  priceHistory: {
+    currentPrice: number;
+    thirtyDayLow: number;
+    thirtyDayAverage: number;
+    ninetyDayLow: number;
+    allTimeLow?: number;
+  };
+  zigVerdict: {
+    status: 'GOOD_DEAL' | 'WAIT' | 'FAIR_PRICE' | 'AMAZING_DEAL' | 'POOR_DEAL';
+    headline: string;
+    explanation: string;
+    percentageDiff: number;
+  };
+  dealScore?: SnagzDealScore;
+  aiAdvisor?: AiShoppingAdvisorAnalysis;
+  vehicleCompatibility?: VehicleCompatibilityInfo;
+  isExactMatch?: boolean;
+  matchedIdentifier?: string;
+  hidden?: boolean;
+  listings: PriceFinderListing[];
+  cheapestListing: PriceFinderListing;
+  retailersCheckedCount: number;
+  similarProducts?: PriceFinderSimilarProduct[];
+  resultSourceType?: 'LIVE_WEB' | 'LOCAL_CATALOG' | 'ESTIMATED';
+  sourceUrl?: string;
+  sourceDomain?: string;
+  retrievedAt?: string;
+  dataSourceBadge?: {
+    label: string;
+    type: 'LIVE_WEB' | 'LOCAL_CATALOG' | 'ESTIMATED';
+    description: string;
+    sourceUrl?: string;
+  };
+}
+
+export interface PriceFinderSearchSummary {
+  totalMatching?: number;
+  retailersCount?: number;
+  totalRetailersChecked?: number;
+  lowestPriceFound?: number;
+  highestPriceFound?: number;
+  averagePrice?: number;
+  maxPotentialSavings?: number;
+  bestDealRetailer?: string;
+  cheapestPrice?: number;
+  cheapestProductTitle?: string;
+  cheapestRetailer?: string;
+  bestOverallValueTitle?: string;
+  bestOverallValueRetailer?: string;
+  bestOverallValuePrice?: number;
+  bestDealTitle?: string;
+  bestDealScore?: string;
+  headline?: string;
+}
+
+export interface SearchedRetailerItem {
+  name: string;
+  domain: string;
+  logo: string;
+  foundItemsCount: number;
+  verifiedDirect: boolean;
+}
+
+export interface PriceFinderSearchDiagnostics {
+  providerUsed: string;
+  liveGoogleSearchExecuted: boolean;
+  groundedSourcesFound: number;
+  validProductListingsExtracted: number;
+  retailerDomains: string[];
+  relevanceFilteredOutCount: number;
+  searchQueriesGenerated: string[];
+  errorMessage?: string;
+  status?: string;
+  message?: string;
+}
+
+export interface PriceFinderSearchResult {
+  count: number;
+  query: string;
+  retailersCheckedCount: number;
+  searchedRetailers?: SearchedRetailerItem[];
+  searchSummary?: PriceFinderSearchSummary;
+  aiOverallAdvisor?: string | AiShoppingAdvisorAnalysis;
+  products: PriceFinderProduct[];
+  bestMatch?: PriceFinderProduct;
+  suggestions: string[];
+  noResultsFound?: boolean;
+  message?: string;
+  suggestedSearchTerms?: string[];
+  diagnostics?: PriceFinderSearchDiagnostics;
+}
+

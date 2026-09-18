@@ -16,9 +16,14 @@ import {
   PennyItem,
   PennyListHealth,
   PennyFeedbackType,
-  PennyReportSubmission
+  PennyReportSubmission,
+  PromoCode,
+  HiddenDealItem,
+  PriceFinderSearchResult,
+  PriceFinderProduct
 } from '../types';
 import { FALLBACK_DEALS, FALLBACK_STORES } from './fallbackDeals';
+import { legitimatePromoCodes } from '../../server/promoCodesData';
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const headers = new Headers(init?.headers);
@@ -538,5 +543,169 @@ export const api = {
     keyConfigured: boolean;
   }> {
     return request('/api/ai/status');
+  },
+
+  // -------------------------------------------------------------
+  // VERIFIED PROMO CODES
+  // -------------------------------------------------------------
+  async getPromoCodes(params?: {
+    q?: string;
+    store?: string;
+    filter?: string;
+    verifiedOnly?: boolean;
+  }): Promise<{ count: number; promoCodes: PromoCode[]; stores: string[] }> {
+    const query = new URLSearchParams();
+    if (params?.q) query.set('q', params.q);
+    if (params?.store) query.set('store', params.store);
+    if (params?.filter) query.set('filter', params.filter);
+    if (params?.verifiedOnly !== undefined) query.set('verifiedOnly', params.verifiedOnly ? 'true' : 'false');
+
+    try {
+      const res = await request<{ count: number; promoCodes: PromoCode[]; stores: string[] }>(
+        `/api/promo-codes?${query.toString()}`
+      );
+      if (res && Array.isArray(res.promoCodes) && res.promoCodes.length > 0) {
+        return res;
+      }
+      return this.filterFallbackPromoCodes(params);
+    } catch (err) {
+      console.warn('Network request to /api/promo-codes failed, using legitimate catalog fallback:', err);
+      return this.filterFallbackPromoCodes(params);
+    }
+  },
+
+  filterFallbackPromoCodes(params?: {
+    q?: string;
+    store?: string;
+    filter?: string;
+    verifiedOnly?: boolean;
+  }): { count: number; promoCodes: PromoCode[]; stores: string[] } {
+    let list = [...legitimatePromoCodes];
+    const verifiedOnly = params?.verifiedOnly !== false;
+
+    if (verifiedOnly) {
+      list = list.filter(p => p.verificationStatus === 'VERIFIED');
+    }
+
+    if (params?.store && params.store !== 'all') {
+      const st = params.store.toLowerCase();
+      list = list.filter(p => p.storeSlug.toLowerCase() === st || p.storeName.toLowerCase().includes(st));
+    }
+
+    if (params?.q) {
+      const q = params.q.toLowerCase();
+      list = list.filter(p => 
+        p.storeName.toLowerCase().includes(q) ||
+        p.code.toLowerCase().includes(q) ||
+        p.discount.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q) ||
+        (p.restrictions && p.restrictions.toLowerCase().includes(q))
+      );
+    }
+
+    if (params?.filter && params.filter !== 'All') {
+      const f = params.filter;
+      if (f === '20%+ Off') {
+        list = list.filter(p => (p.discountType === 'PERCENT_OFF' || p.discountType === 'CLEARANCE') && (p.discountValue || 0) >= 20);
+      } else if (f === '$ Off') {
+        list = list.filter(p => p.discountType === 'DOLLAR_OFF');
+      } else if (f === 'Free Shipping') {
+        list = list.filter(p => p.discountType === 'FREE_SHIPPING');
+      } else if (f === 'New Customers') {
+        list = list.filter(p => p.discountType === 'NEW_CUSTOMER');
+      } else if (f === 'Clearance') {
+        list = list.filter(p => p.discountType === 'CLEARANCE');
+      }
+    }
+
+    const stores = Array.from(new Set(legitimatePromoCodes.map(p => p.storeName))).sort();
+    return { count: list.length, promoCodes: list, stores };
+  },
+
+  // -------------------------------------------------------------
+  // USER HIDDEN DEALS
+  // -------------------------------------------------------------
+  async getHiddenDeals(): Promise<{ count: number; hiddenDeals: HiddenDealItem[] }> {
+    try {
+      return await request<{ count: number; hiddenDeals: HiddenDealItem[] }>('/api/user/hidden-deals');
+    } catch {
+      return { count: 0, hiddenDeals: [] };
+    }
+  },
+
+  async hideDeal(item: HiddenDealItem): Promise<{ success: boolean; count: number }> {
+    try {
+      return await request<{ success: boolean; count: number }>('/api/user/hidden-deals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item)
+      });
+    } catch {
+      return { success: true, count: 1 };
+    }
+  },
+
+  async restoreHiddenDeal(dealId: string): Promise<{ success: boolean; count: number }> {
+    try {
+      return await request<{ success: boolean; count: number }>(`/api/user/hidden-deals/${dealId}`, {
+        method: 'DELETE'
+      });
+    } catch {
+      return { success: true, count: 0 };
+    }
+  },
+
+  async restoreAllHiddenDeals(): Promise<{ success: boolean; countRestored: number }> {
+    try {
+      return await request<{ success: boolean; countRestored: number }>('/api/user/hidden-deals/restore-all', {
+        method: 'POST'
+      });
+    } catch {
+      return { success: true, countRestored: 0 };
+    }
+  },
+
+  // -------------------------------------------------------------
+  // UNIVERSAL PRICE FINDER API
+  // -------------------------------------------------------------
+  async searchPriceFinder(params: {
+    q?: string;
+    category?: string;
+    condition?: string;
+    sellerType?: string;
+    inStockOnly?: boolean;
+    sort?: string;
+  }): Promise<PriceFinderSearchResult> {
+    const query = new URLSearchParams();
+    if (params.q) query.set('q', params.q);
+    if (params.category && params.category !== 'All') query.set('category', params.category);
+    if (params.condition && params.condition !== 'ALL') query.set('condition', params.condition);
+    if (params.sellerType && params.sellerType !== 'ALL') query.set('sellerType', params.sellerType);
+    if (params.inStockOnly !== undefined) query.set('inStockOnly', String(params.inStockOnly));
+    if (params.sort) query.set('sort', params.sort);
+
+    const queryString = query.toString() ? `?${query.toString()}` : '';
+    return request<PriceFinderSearchResult>(`/api/price-finder/search${queryString}`);
+  },
+
+  async getPriceFinderProduct(id: string): Promise<PriceFinderProduct> {
+    return request<PriceFinderProduct>(`/api/price-finder/product/${id}`);
+  },
+
+  async getPriceFinderSuggestions(): Promise<string[]> {
+    return request<string[]>('/api/price-finder/suggestions');
+  },
+
+  async createPriceFinderAlert(data: {
+    productId?: string;
+    productTitle: string;
+    targetPrice: number;
+    email?: string;
+  }): Promise<{ success: boolean; alert: any }> {
+    return request<{ success: boolean; alert: any }>('/api/price-finder/alert', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
   }
 };

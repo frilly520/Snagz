@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { db } from './db';
 import { pennyService } from './pennyService';
+import { priceFinderService } from './priceFinderService';
 import { translateSearchIntent, askDealAssistant, analyzeReceipt } from './ai';
 import { runIngestionPipeline } from './pipeline';
 import { Deal, StackingBreakdown, UserList, DealAlert, ProductWatchlistItem, UserReport, SavingsLogItem } from '../src/types';
@@ -850,6 +851,149 @@ app.get('/api/categories', (req, res) => {
   res.json(categories);
 });
 
+// -------------------------------------------------------------
+// VERIFIED PROMO CODES API
+// -------------------------------------------------------------
+app.get('/api/promo-codes', (req, res) => {
+  const q = (req.query.q as string || '').toLowerCase().trim();
+  const store = (req.query.store as string || '').toLowerCase().trim();
+  const filter = (req.query.filter as string || 'All').trim();
+  const verifiedOnly = req.query.verifiedOnly !== 'false'; // default to verified
+
+  let results = [...db.promoCodes];
+
+  // Store filter
+  if (store && store !== 'all') {
+    results = results.filter(p => 
+      p.storeSlug.toLowerCase() === store || 
+      p.storeName.toLowerCase().includes(store)
+    );
+  }
+
+  // Verified only filter
+  if (verifiedOnly) {
+    results = results.filter(p => p.verificationStatus === 'VERIFIED');
+  }
+
+  // Search filter
+  if (q) {
+    results = results.filter(p => 
+      p.storeName.toLowerCase().includes(q) ||
+      p.code.toLowerCase().includes(q) ||
+      p.discount.toLowerCase().includes(q) ||
+      p.description.toLowerCase().includes(q) ||
+      (p.restrictions && p.restrictions.toLowerCase().includes(q))
+    );
+  }
+
+  // Category / Discount filter
+  if (filter && filter !== 'All') {
+    if (filter === '20%+ Off') {
+      results = results.filter(p => (p.discountType === 'PERCENT_OFF' || p.discountType === 'CLEARANCE') && (p.discountValue || 0) >= 20);
+    } else if (filter === '$ Off') {
+      results = results.filter(p => p.discountType === 'DOLLAR_OFF');
+    } else if (filter === 'Free Shipping') {
+      results = results.filter(p => p.discountType === 'FREE_SHIPPING');
+    } else if (filter === 'New Customers') {
+      results = results.filter(p => p.discountType === 'NEW_CUSTOMER');
+    } else if (filter === 'Clearance') {
+      results = results.filter(p => p.discountType === 'CLEARANCE');
+    } else if (filter === 'Expiring Soon') {
+      const thirtyDaysFromNow = Date.now() + 30 * 24 * 60 * 60 * 1000;
+      results = results.filter(p => {
+        if (!p.expirationDate) return false;
+        const exp = new Date(p.expirationDate).getTime();
+        return !isNaN(exp) && exp <= thirtyDaysFromNow;
+      });
+    }
+  }
+
+  // Extract unique store names for filtering
+  const stores = Array.from(new Set(db.promoCodes.map(p => p.storeName))).sort();
+
+  res.json({
+    count: results.length,
+    promoCodes: results,
+    stores
+  });
+});
+
+app.get('/api/promo-codes/:id', (req, res) => {
+  const promo = db.promoCodes.find(p => p.id === req.params.id);
+  if (!promo) {
+    return res.status(404).json({ error: 'Promo code not found' });
+  }
+  res.json(promo);
+});
+
+// -------------------------------------------------------------
+// UNIVERSAL PRICE FINDER API ENDPOINTS
+// -------------------------------------------------------------
+
+// GET /api/price-finder/search (Search and compare prices across all US retailers)
+app.get('/api/price-finder/search', async (req, res) => {
+  try {
+    const { q, category, condition, sellerType, inStockOnly, sort } = req.query as Record<string, string>;
+    const result = await priceFinderService.search({
+      q,
+      category,
+      condition: condition as any,
+      sellerType: sellerType as any,
+      inStockOnly: inStockOnly !== 'false',
+      sort: sort as any
+    });
+    res.json(result);
+  } catch (err: any) {
+    console.error('[SNAGZ API ERROR] /api/price-finder/search:', err);
+    res.status(500).json({ error: err.message || 'Price comparison search failed' });
+  }
+});
+
+// GET /api/price-finder/product/:id (Deep multi-retailer breakdown by product ID)
+app.get('/api/price-finder/product/:id', (req, res) => {
+  try {
+    const product = priceFinderService.getProductById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found in Price Finder catalog' });
+    }
+    res.json(product);
+  } catch (err: any) {
+    console.error('[SNAGZ API ERROR] /api/price-finder/product/:id:', err);
+    res.status(500).json({ error: err.message || 'Failed to fetch product price comparison' });
+  }
+});
+
+// GET /api/price-finder/suggestions (Popular product comparison query chips)
+app.get('/api/price-finder/suggestions', (req, res) => {
+  res.json(priceFinderService.getSearchSuggestions());
+});
+
+// POST /api/price-finder/alert (Set a target price drop alert for a product)
+app.post('/api/price-finder/alert', (req, res) => {
+  try {
+    const { productId, productTitle, targetPrice, email } = req.body;
+    if (!productTitle || !targetPrice) {
+      return res.status(400).json({ error: 'Product title and target price are required' });
+    }
+    const newAlert: DealAlert = {
+      id: `alert-pf-${Date.now()}`,
+      query: productTitle,
+      type: 'price_drop',
+      targetPriceMax: parseFloat(targetPrice),
+      notifyEmail: Boolean(email),
+      notifyPush: true,
+      active: true,
+      matchCount: 1,
+      createdAt: new Date().toISOString()
+    };
+    db.dealAlerts.unshift(newAlert);
+    res.json({ success: true, alert: newAlert });
+  } catch (err: any) {
+    console.error('[SNAGZ API ERROR] /api/price-finder/alert:', err);
+    res.status(500).json({ error: err.message || 'Failed to set price alert' });
+  }
+});
+
 // POST /api/calculator/stack
 app.post('/api/calculator/stack', (req, res) => {
   const {
@@ -1083,6 +1227,53 @@ app.post('/api/user/saved/toggle', (req, res) => {
     db.savingsTracker.dealsSavedCount += 1;
   }
   res.json({ isSaved: !isSaved, savedCount: db.savedDealIds.size });
+});
+
+// -------------------------------------------------------------
+// USER HIDDEN DEALS API
+// -------------------------------------------------------------
+app.get('/api/user/hidden-deals', (req, res) => {
+  const list = Array.from(db.hiddenDeals.values());
+  res.json({
+    count: list.length,
+    hiddenDeals: list
+  });
+});
+
+app.post('/api/user/hidden-deals', (req, res) => {
+  const { dealId, reason, dealTitle, storeName, storeLogo, price, originalPrice } = req.body;
+  if (!dealId) {
+    return res.status(400).json({ error: 'dealId is required' });
+  }
+
+  // Find deal details if not provided
+  const existingDeal = db.deals.find(d => d.id === dealId);
+  const hiddenItem = {
+    dealId,
+    dealTitle: dealTitle || existingDeal?.title || 'Unknown Deal',
+    storeName: storeName || existingDeal?.storeName || 'Retailer',
+    storeLogo: storeLogo || existingDeal?.storeLogo || '',
+    price: price !== undefined ? price : (existingDeal?.estimatedFinalPrice ?? existingDeal?.currentPrice),
+    originalPrice: originalPrice !== undefined ? originalPrice : existingDeal?.originalPrice,
+    reason: reason || undefined,
+    hiddenAt: new Date().toISOString()
+  };
+
+  db.hiddenDeals.set(dealId, hiddenItem);
+  res.json({ success: true, hiddenItem, count: db.hiddenDeals.size });
+});
+
+app.delete('/api/user/hidden-deals/:dealId', (req, res) => {
+  const { dealId } = req.params;
+  const wasHidden = db.hiddenDeals.has(dealId);
+  db.hiddenDeals.delete(dealId);
+  res.json({ success: true, restored: wasHidden, count: db.hiddenDeals.size });
+});
+
+app.post('/api/user/hidden-deals/restore-all', (req, res) => {
+  const count = db.hiddenDeals.size;
+  db.hiddenDeals.clear();
+  res.json({ success: true, countRestored: count });
 });
 
 // Product Watchlist

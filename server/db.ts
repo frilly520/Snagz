@@ -18,8 +18,11 @@ import {
   CategoryBalanceMetric,
   RetailerDiscoveryHealth,
   StoreLocation,
-  StoreLoyaltyProgram
+  StoreLoyaltyProgram,
+  PromoCode,
+  HiddenDealItem
 } from '../src/types';
+import { legitimatePromoCodes } from './promoCodesData';
 import { comprehensiveStores, sampleStoreLocations, sampleLoyaltyPrograms } from './retailerDatabase';
 import { CVSAdapter, WalmartAdapter, WalgreensAdapter, KrogerAdapter, HomeDepotAdapter, AutoZoneAdapter, DollarGeneralAdapter, CostcoAdapter, AldiAdapter } from './retailerAdapters';
 
@@ -1504,6 +1507,8 @@ class InMemoryDatabase {
   searchHistory: string[] = ['CVS', 'Kroger chicken', 'Walmart Rollback', 'Home Depot tools', 'Dollar General $5 off $25'];
   locations: StoreLocation[] = [...sampleStoreLocations];
   loyaltyPrograms: StoreLoyaltyProgram[] = [...sampleLoyaltyPrograms];
+  promoCodes: PromoCode[] = [...legitimatePromoCodes];
+  hiddenDeals: Map<string, HiddenDealItem> = new Map();
 
   constructor() {
     this.initDeals();

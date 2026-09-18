@@ -14,7 +14,8 @@ import {
   RefreshCw,
   Trophy,
   Bell,
-  PiggyBank
+  PiggyBank,
+  Tag
 } from 'lucide-react';
 import { api } from './services/api';
 import { 
@@ -26,11 +27,15 @@ import {
   NaturalSearchIntent,
   BestDealEvaluation,
   PriceDropCombinationAlert,
-  SupportedCurrency
+  SupportedCurrency,
+  HideDealReason
 } from './types';
 import { Header } from './components/Header';
 import { BottomNav } from './components/BottomNav';
 import { CouponCard } from './components/CouponCard';
+import { CleanHomeView } from './components/CleanHomeView';
+import { PromoCodesView } from './components/PromoCodesView';
+import { DealHiddenToast } from './components/DealHiddenToast';
 import { BestDealBanner } from './components/BestDealBanner';
 import { PriceDropAlertsDrawer } from './components/PriceDropAlertsDrawer';
 import { PostDealConfirmationModal } from './components/PostDealConfirmationModal';
@@ -53,11 +58,14 @@ import { SavedAndLists } from './components/SavedAndLists';
 import { AdminDashboard } from './components/AdminDashboard';
 import { SnagzSplashScreen, SnagzLoadingState } from './components/SnagzSplashScreen';
 import { PennyListView } from './components/PennyListView';
-import { PennyHomeModule } from './components/PennyHomeModule';
+import { PriceFinderView } from './components/PriceFinderView';
+import { hiddenDealsManager } from './services/hiddenDealsManager';
+
+export type AppNavTab = 'home' | 'deals' | 'stores' | 'promocodes' | 'pricefinder' | 'free' | 'saved' | 'penny' | 'savings' | 'admin';
 
 export function App() {
   // Navigation
-  const [activeTab, setActiveTab] = useState<'home' | 'savings' | 'stores' | 'free' | 'saved' | 'admin' | 'penny'>('home');
+  const [activeTab, setActiveTab] = useState<AppNavTab>('home');
 
   // Main Data States
   const [deals, setDeals] = useState<Deal[]>([]);
@@ -70,8 +78,13 @@ export function App() {
   const [alerts, setAlerts] = useState<DealAlert[]>([]);
   const [savedDealIds, setSavedDealIds] = useState<Set<string>>(new Set(['deal-nike-airmax', 'deal-target-circle-stack']));
 
+  // Hidden Deals Management
+  const [hiddenVersion, setHiddenVersion] = useState(0);
+  const [toastHiddenDeal, setToastHiddenDeal] = useState<Deal | null>(null);
+
   // Filter & Search States
   const [searchQuery, setSearchQuery] = useState('');
+  const [priceFinderQuery, setPriceFinderQuery] = useState('');
   const [naturalIntent, setNaturalIntent] = useState<NaturalSearchIntent | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [channelFilter, setChannelFilter] = useState('ALL');
@@ -108,15 +121,27 @@ export function App() {
   const [isInitialSplash, setIsInitialSplash] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsInitialSplash(false), 500);
+    const timer = setTimeout(() => setIsInitialSplash(false), 400);
     return () => clearTimeout(timer);
   }, []);
+
+  // Subscribe to hidden deals changes
+  useEffect(() => {
+    const unsubscribe = hiddenDealsManager.subscribe(() => {
+      setHiddenVersion(v => v + 1);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Filter out hidden deals across all feeds
+  const visibleDeals = useMemo(() => {
+    return hiddenDealsManager.filterVisibleDeals(deals);
+  }, [deals, hiddenVersion]);
 
   const handleOpenBestDealComparison = () => {
     if (!bestDealData) return;
     const topChoice = { ...bestDealData.bestDeal, isBestChoice: true };
-    // Find 2 other alternative deals from the current category or list to compare side-by-side
-    const others = deals.filter(d => d.id !== topChoice.id).slice(0, 2);
+    const others = visibleDeals.filter(d => d.id !== topChoice.id).slice(0, 2);
     setComparisonDeals([topChoice, ...others]);
   };
 
@@ -192,6 +217,11 @@ export function App() {
       return;
     }
 
+    // Switch to deals tab to view matching search results
+    if (activeTab === 'home') {
+      setActiveTab('deals');
+    }
+
     try {
       const intent = await api.parseSearchIntent(query, `${currentLocation.city}, ${currentLocation.state}`);
       setNaturalIntent(intent);
@@ -208,6 +238,21 @@ export function App() {
     } catch (err) {
       console.error('Search intent parse error:', err);
     }
+  };
+
+  // Hide Deal Feature Handlers
+  const handleHideDeal = (deal: Deal) => {
+    hiddenDealsManager.hideDeal(deal);
+    setToastHiddenDeal(deal);
+  };
+
+  const handleUndoHide = (deal: Deal) => {
+    hiddenDealsManager.restoreDeal(deal.id);
+    setToastHiddenDeal(null);
+  };
+
+  const handleSelectHideReason = (dealId: string, reason: HideDealReason) => {
+    hiddenDealsManager.setReason(dealId, reason);
   };
 
   // Deal Save Toggle
@@ -258,11 +303,10 @@ export function App() {
     }
   };
 
-  // Post Deal Confirmation (Confirm savings & update achievements)
+  // Post Deal Confirmation
   const handleConfirmSuccess = async (dealId: string, amountSaved: number, code?: string) => {
     try {
       await api.confirmSavings(dealId, amountSaved, code);
-      // increment confirmation on UI
       setDeals(prev => prev.map(d => {
         if (d.id === dealId) {
           return {
@@ -281,7 +325,7 @@ export function App() {
     }
   };
 
-  // Toggle Store Follow
+  // Store Follow
   const handleToggleFollowStore = async (storeId: string) => {
     try {
       const res = await api.toggleFollowStore(storeId);
@@ -382,15 +426,15 @@ export function App() {
   };
 
   const savedDeals = useMemo(() => {
-    return deals.filter(d => savedDealIds.has(d.id));
-  }, [deals, savedDealIds]);
+    return visibleDeals.filter(d => savedDealIds.has(d.id));
+  }, [visibleDeals, savedDealIds]);
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans pb-16 md:pb-8 selection:bg-emerald-500 selection:text-neutral-950">
+    <div className="min-h-screen bg-[#0a0d14] text-neutral-100 flex flex-col font-sans pb-16 md:pb-8 selection:bg-blue-500 selection:text-white">
       {/* Splash / Launch Experience */}
       {isInitialSplash && <SnagzSplashScreen />}
 
-      {/* Header with Search, Price Alerts Bell, Savings Tracker, and Tool Launchers */}
+      {/* Primary Header with 6 destinations and secondary ZIG */}
       <Header
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -409,7 +453,7 @@ export function App() {
         selectedCategory={selectedCategory}
         onSelectCategory={(cat) => {
           setSelectedCategory(cat);
-          if (activeTab !== 'home') setActiveTab('home');
+          if (activeTab !== 'deals') setActiveTab('deals');
         }}
         categories={categories}
         sortOption={sortOption}
@@ -427,14 +471,38 @@ export function App() {
         currency={currency}
         activeNavTab={activeTab}
         onNavigateTab={(tab) => setActiveTab(tab)}
+        hiddenDealsCount={hiddenDealsManager.getHiddenDeals().length}
       />
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
-        {/* VIEW 1: HOME DEALS FEED */}
+        {/* DESTINATION 1: HOMEPAGE (Clean Front Door) */}
         {activeTab === 'home' && (
+          <CleanHomeView
+            deals={visibleDeals}
+            stores={stores}
+            currency={currency}
+            savedDealIds={savedDealIds}
+            onToggleSaveDeal={handleToggleSaveDeal}
+            onOpenDetails={(d) => setSelectedDealForDetails(d)}
+            onHideDeal={handleHideDeal}
+            onReportDeal={(d) => setSelectedDealForDetails(d)}
+            onTriggerConfirmation={(d) => setDealToConfirm(d)}
+            onNavigateTab={(tab, query) => {
+              if (query) setPriceFinderQuery(query);
+              setActiveTab(tab);
+            }}
+            onSelectStore={(storeName) => {
+              setSearchQuery(storeName);
+              setActiveTab('deals');
+            }}
+          />
+        )}
+
+        {/* DESTINATION 2: DEALS (Full Filtered Feed) */}
+        {activeTab === 'deals' && (
           <div className="space-y-6">
-            {/* SNAGZ Brand Quick Navigation Hub */}
+            {/* Category Filter Pills */}
             <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
               <button
                 type="button"
@@ -443,109 +511,54 @@ export function App() {
                   setMoneyMakerOnly(false); 
                   setRecipesOnly(false); 
                   setSelectedCategory('All'); 
-                  setSortOption('best_deal'); 
                 }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition shrink-0 ${
-                  !freeOnly && !moneyMakerOnly && !recipesOnly && selectedCategory === 'All'
-                    ? 'bg-blue-600 text-white border-blue-500 font-extrabold shadow-sm shadow-blue-900/30'
-                    : 'bg-[#101524] hover:bg-[#182138] border-[#222b3e] text-neutral-200'
+                className={`px-3.5 py-1.5 rounded-xl border text-xs font-bold transition shrink-0 ${
+                  selectedCategory === 'All' && !freeOnly && !moneyMakerOnly && !recipesOnly
+                    ? 'bg-blue-600 text-white border-blue-500 shadow-sm shadow-blue-900/30'
+                    : 'bg-[#121624] hover:bg-[#182138] border-[#222b3e] text-neutral-300'
                 }`}
               >
-                <span>🔥 ALL DEALS</span>
+                All Deals
               </button>
 
-              {/* Quick Tab to 1¢ Penny List */}
-              <button
-                type="button"
-                onClick={() => setActiveTab('penny')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-950/40 hover:bg-amber-900/60 border border-amber-500/40 text-xs font-black text-amber-300 transition shrink-0"
-              >
-                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                <span>1¢ PENNY LIST</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => { 
-                  setRecipesOnly(!recipesOnly); 
-                  setMoneyMakerOnly(false); 
-                  setFreeOnly(false); 
-                }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition shrink-0 ${
-                  recipesOnly 
-                    ? 'bg-purple-500/30 text-purple-300 border-purple-500/70 shadow-sm' 
-                    : 'bg-[#101524] hover:bg-[#182138] border-[#222b3e] text-neutral-200'
-                }`}
-              >
-                <span>⚡ SAVINGS RECIPES</span>
-              </button>
+              {categories.map((c) => (
+                <button
+                  key={c.name}
+                  type="button"
+                  onClick={() => {
+                    setSelectedCategory(c.name);
+                    setFreeOnly(false);
+                    setMoneyMakerOnly(false);
+                  }}
+                  className={`px-3.5 py-1.5 rounded-xl border text-xs font-bold transition shrink-0 ${
+                    selectedCategory === c.name && !freeOnly && !moneyMakerOnly
+                      ? 'bg-blue-600 text-white border-blue-500 shadow-sm shadow-blue-900/30'
+                      : 'bg-[#121624] hover:bg-[#182138] border-[#222b3e] text-neutral-300'
+                  }`}
+                >
+                  {c.name}
+                </button>
+              ))}
 
               <button
                 type="button"
                 onClick={() => { 
                   setMoneyMakerOnly(!moneyMakerOnly); 
-                  setRecipesOnly(false); 
-                  setFreeOnly(false); 
+                  setFreeOnly(false);
                   if (!moneyMakerOnly) setSortOption('money_maker');
                 }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition shrink-0 ${
+                className={`px-3.5 py-1.5 rounded-xl border text-xs font-bold transition shrink-0 ${
                   moneyMakerOnly 
                     ? 'bg-amber-500/30 text-amber-300 border-amber-500/70 shadow-sm' 
-                    : 'bg-[#101524] hover:bg-[#182138] border-[#222b3e] text-neutral-200'
+                    : 'bg-[#121624] hover:bg-[#182138] border-[#222b3e] text-neutral-300'
                 }`}
               >
-                <span>💰 MONEY MAKERS</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => { 
-                  setFreeOnly(!freeOnly); 
-                  setMoneyMakerOnly(false); 
-                  setRecipesOnly(false); 
-                }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition shrink-0 ${
-                  freeOnly 
-                    ? 'bg-blue-500/20 text-blue-300 border-blue-500/50' 
-                    : 'bg-[#101524] hover:bg-[#182138] border-[#222b3e] text-neutral-200'
-                }`}
-              >
-                <span>🆓 FREE ($0 OFFERS)</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => { 
-                  setFreeOnly(false); 
-                  setMoneyMakerOnly(false); 
-                  setRecipesOnly(false); 
-                  setSelectedCategory('Restaurants & Food'); 
-                }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition shrink-0 ${
-                  selectedCategory === 'Restaurants & Food'
-                    ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/60' 
-                    : 'bg-[#101524] hover:bg-[#182138] border-[#222b3e] text-neutral-200'
-                }`}
-              >
-                <span>🛒 GROCERY & FOOD</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveTab('stores')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#101524] hover:bg-[#182138] border border-[#222b3e] text-xs font-bold text-neutral-200 transition shrink-0"
-              >
-                <span>🏪 POPULAR STORES</span>
+                💰 Money Makers
               </button>
             </div>
 
-            {/* 1¢ PENNY FINDS HOMEPAGE MODULE */}
-            {!freeOnly && !moneyMakerOnly && !recipesOnly && (
-              <PennyHomeModule onViewAllPennyFinds={() => setActiveTab('penny')} />
-            )}
-
-            {/* BEST DEAL ENGINE SHOWCASE */}
-            {bestDealData && !freeOnly && (
+            {/* Best Deal Engine Showcase (if not hidden) */}
+            {bestDealData && !hiddenDealsManager.isDealHidden(bestDealData.bestDeal.id) && !freeOnly && (
               <BestDealBanner
                 deal={bestDealData.bestDeal}
                 evaluation={bestDealData.evaluation}
@@ -559,15 +572,15 @@ export function App() {
               />
             )}
 
-            {/* Deals Grid Header */}
-            <div className="flex items-center justify-between pt-2">
+            {/* Feed Header */}
+            <div className="flex items-center justify-between pt-1">
               <div>
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                  <span>{selectedCategory === 'All' ? 'Verified Deals & Coupon Stacks' : `${selectedCategory} Deals`}</span>
-                  <span className="text-xs font-mono text-neutral-500 font-normal">({deals.length} verified)</span>
+                  <span>{selectedCategory === 'All' ? 'Verified Deals & Stacks' : `${selectedCategory} Deals`}</span>
+                  <span className="text-xs font-mono text-neutral-400 font-normal">({visibleDeals.length} active)</span>
                 </h2>
                 <p className="text-xs text-neutral-400 mt-0.5">
-                  Algorithmically ranked by discount depth, verification confidence, and price history advantage
+                  Hand-verified offers updated in real-time
                 </p>
               </div>
 
@@ -575,7 +588,7 @@ export function App() {
                 type="button"
                 onClick={loadDeals}
                 title="Refresh Deals Feed"
-                className="p-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-400 hover:text-white transition-colors"
+                className="p-2 rounded-xl bg-[#121624] hover:bg-[#182138] border border-[#222b3e] text-neutral-400 hover:text-white transition-colors"
               >
                 <RefreshCw className={`w-4 h-4 ${isLoadingDeals ? 'animate-spin' : ''}`} />
               </button>
@@ -584,18 +597,18 @@ export function App() {
             {/* Deals Grid */}
             {isLoadingDeals ? (
               <SnagzLoadingState 
-                message="Scanning current offers…" 
-                subMessage="Running real-time price verification, circular matching, and coupon stack analysis..." 
+                message="Scanning offers…" 
+                subMessage="Checking verification confidence and prices..." 
               />
-            ) : deals.length === 0 ? (
-              <div className="p-12 text-center rounded-2xl bg-neutral-900/60 border border-neutral-800">
+            ) : visibleDeals.length === 0 ? (
+              <div className="p-12 text-center rounded-2xl bg-[#121624] border border-[#222b3e]">
                 <ShieldCheck className="w-12 h-12 text-neutral-600 mx-auto mb-3" />
-                <h3 className="font-bold text-white text-base">No matching deals found</h3>
-                <p className="text-xs text-neutral-400 mt-1">Try broadening your search term or exploring another category.</p>
+                <h3 className="font-bold text-white text-base">No matching deals</h3>
+                <p className="text-xs text-neutral-400 mt-1">Try broadening your search or resetting category filters.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-                {deals.map((deal) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {visibleDeals.map((deal) => (
                   <CouponCard
                     key={deal.id}
                     deal={deal}
@@ -607,6 +620,8 @@ export function App() {
                     onVote={handleVote}
                     onOpenWhyNotFree={(d) => setSelectedDealForWhyNotFree(d)}
                     onTriggerConfirmation={(d) => setDealToConfirm(d)}
+                    onHideDeal={handleHideDeal}
+                    onReportDeal={(d) => setSelectedDealForDetails(d)}
                   />
                 ))}
               </div>
@@ -614,22 +629,21 @@ export function App() {
           </div>
         )}
 
-        {/* VIEW 2: SAVINGS TRACKER DASHBOARD */}
-        {activeTab === 'savings' && (
-          <SavingsTrackerView
-            currency={currency}
-            onSelectDeal={(dealId) => {
-              const found = deals.find(d => d.id === dealId);
-              if (found) setSelectedDealForDetails(found);
-            }}
-          />
+        {/* DESTINATION 3: PROMO CODES (Dedicated Verified Promo Codes Page) */}
+        {activeTab === 'promocodes' && (
+          <PromoCodesView />
         )}
 
-        {/* VIEW 3: STORES & CASHBACK DIRECTORY */}
+        {/* DESTINATION: UNIVERSAL PRICE FINDER */}
+        {activeTab === 'pricefinder' && (
+          <PriceFinderView initialQuery={priceFinderQuery} />
+        )}
+
+        {/* DESTINATION 4: STORES (Directory) */}
         {activeTab === 'stores' && (
           <StoreDirectory
             stores={stores}
-            deals={deals}
+            deals={visibleDeals}
             savedDealIds={savedDealIds}
             onToggleSaveDeal={handleToggleSaveDeal}
             onToggleFollowStore={handleToggleFollowStore}
@@ -639,10 +653,10 @@ export function App() {
           />
         )}
 
-        {/* VIEW 4: FREE DEALS & SAMPLES HUB */}
+        {/* DESTINATION 5: FREE DEALS HUB */}
         {activeTab === 'free' && (
           <FreeDealsHub
-            deals={deals}
+            deals={visibleDeals}
             savedDealIds={savedDealIds}
             onToggleSave={handleToggleSaveDeal}
             onOpenDetails={(d) => setSelectedDealForDetails(d)}
@@ -651,7 +665,19 @@ export function App() {
           />
         )}
 
-        {/* VIEW 5: USER SAVED & CUSTOM LISTS */}
+        {/* DESTINATION 6: PENNY LIST SECTION */}
+        {activeTab === 'penny' && (
+          <PennyListView
+            onAskZigAboutPenny={(query) => {
+              setIsAiAssistantOpen(true);
+            }}
+            savedItemIds={savedDealIds}
+            onToggleSave={handleToggleSaveDeal}
+            currency={currency}
+          />
+        )}
+
+        {/* DESTINATION 7: SAVED DEALS & CUSTOM LISTS */}
         {activeTab === 'saved' && (
           <SavedAndLists
             savedDeals={savedDeals}
@@ -670,23 +696,22 @@ export function App() {
             onRemoveFromWatchlist={handleRemoveFromWatchlist}
             onCreateAlert={handleCreateAlert}
             onDeleteAlert={handleDeleteAlert}
-            allDeals={deals}
+            allDeals={visibleDeals}
           />
         )}
 
-        {/* VIEW 6: 1¢ PENNY LIST SECTION */}
-        {activeTab === 'penny' && (
-          <PennyListView
-            onAskZigAboutPenny={(query) => {
-              setIsAiAssistantOpen(true);
-            }}
-            savedItemIds={savedDealIds}
-            onToggleSave={handleToggleSaveDeal}
+        {/* SAVINGS TRACKER DASHBOARD */}
+        {activeTab === 'savings' && (
+          <SavingsTrackerView
             currency={currency}
+            onSelectDeal={(dealId) => {
+              const found = visibleDeals.find(d => d.id === dealId);
+              if (found) setSelectedDealForDetails(found);
+            }}
           />
         )}
 
-        {/* VIEW 7: ADMIN & TELEMETRY OPERATIONS */}
+        {/* ADMIN & TELEMETRY */}
         {activeTab === 'admin' && (
           <AdminDashboard
             deals={deals}
@@ -698,7 +723,7 @@ export function App() {
         )}
       </main>
 
-      {/* Floating ZIG Mascot Trigger on Desktop bottom-right */}
+      {/* Floating ZIG Mascot Trigger on Desktop */}
       <div className="hidden md:block fixed bottom-6 right-6 z-30">
         <button
           id="btn-desktop-zig-assistant"
@@ -723,12 +748,21 @@ export function App() {
         </button>
       </div>
 
-      {/* Mobile Bottom Navigation */}
+      {/* 5-Item Clean Mobile Bottom Navigation */}
       <BottomNav
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={(tab) => setActiveTab(tab)}
         savedCount={savedDealIds.size}
-        onOpenAiAssistant={() => setIsAiAssistantOpen(true)}
+        onOpenPrivacySettings={() => setIsPrivacyModalOpen(true)}
+        onOpenSavingsTracker={() => setActiveTab('savings')}
+      />
+
+      {/* Deal Hidden Toast with Undo & Feedback Reasons */}
+      <DealHiddenToast
+        hiddenDeal={toastHiddenDeal}
+        onUndo={handleUndoHide}
+        onSelectReason={handleSelectHideReason}
+        onDismiss={() => setToastHiddenDeal(null)}
       />
 
       {/* MODALS */}
@@ -766,7 +800,7 @@ export function App() {
         isOpen={isBarcodeScannerOpen}
         onClose={() => setIsBarcodeScannerOpen(false)}
         onSelectDeal={(dealId) => {
-          const found = deals.find(d => d.id === dealId);
+          const found = visibleDeals.find(d => d.id === dealId);
           if (found) setSelectedDealForDetails(found);
         }}
       />
@@ -782,7 +816,7 @@ export function App() {
         isOpen={isAiAssistantOpen}
         onClose={() => setIsAiAssistantOpen(false)}
         onSelectDealId={(dealId) => {
-          const found = deals.find(d => d.id === dealId);
+          const found = visibleDeals.find(d => d.id === dealId);
           if (found) {
             setIsAiAssistantOpen(false);
             setSelectedDealForDetails(found);
@@ -806,7 +840,7 @@ export function App() {
         currency={currency}
         onSelectDeal={(dealId) => {
           setIsAlertsDrawerOpen(false);
-          const found = deals.find(d => d.id === dealId);
+          const found = visibleDeals.find(d => d.id === dealId);
           if (found) setSelectedDealForDetails(found);
         }}
       />
@@ -828,12 +862,14 @@ export function App() {
         onClose={() => setSelectedDealForWhyNotFree(null)}
       />
 
-      {/* 12. Privacy, Currency & Settings Modal */}
+      {/* 12. Privacy, Currency & Settings Modal (includes Hidden Deals manager tab) */}
       <PrivacyAndSettingsModal
         isOpen={isPrivacyModalOpen}
         onClose={() => setIsPrivacyModalOpen(false)}
         currency={currency}
         onCurrencyChange={(c) => setCurrency(c)}
+        onDealRestored={() => setHiddenVersion(v => v + 1)}
+        onAllRestored={() => setHiddenVersion(v => v + 1)}
       />
 
       {/* 13. Side-by-Side Deal Comparison Modal */}

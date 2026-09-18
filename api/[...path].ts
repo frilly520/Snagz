@@ -1,9 +1,10 @@
 import app from '../server/app';
 import { db } from '../server/db';
 import { pennyService } from '../server/pennyService';
+import { priceFinderService } from '../server/priceFinderService';
 
 // Vercel Serverless Function: Catch-all for all /api/* routes
-export default function handler(req: any, res: any) {
+export default async function handler(req: any, res: any) {
   // CORS & Security Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -61,7 +62,26 @@ export default function handler(req: any, res: any) {
       }
 
       if (subpath === 'saved-deals' || subpath === 'user/saved') {
-        const payload = { savedDealIds: ['deal-nike-airmax', 'deal-target-circle-stack'], deals: [] };
+        const payload = { savedDealIds: Array.from(db.savedDealIds || []), deals: [] };
+        if (typeof res.status === 'function') return res.status(200).json(payload);
+        res.statusCode = 200;
+        return res.end(JSON.stringify(payload));
+      }
+
+      if (subpath === 'user/hidden-deals') {
+        const payload = { count: db.hiddenDeals ? db.hiddenDeals.size : 0, hiddenDeals: Array.from(db.hiddenDeals ? db.hiddenDeals.values() : []) };
+        if (typeof res.status === 'function') return res.status(200).json(payload);
+        res.statusCode = 200;
+        return res.end(JSON.stringify(payload));
+      }
+
+      if (subpath === 'promo-codes') {
+        const stores = Array.from(new Set((db.promoCodes || []).map(p => p.storeName))).sort();
+        const payload = {
+          count: (db.promoCodes || []).length,
+          promoCodes: db.promoCodes || [],
+          stores
+        };
         if (typeof res.status === 'function') return res.status(200).json(payload);
         res.statusCode = 200;
         return res.end(JSON.stringify(payload));
@@ -72,6 +92,32 @@ export default function handler(req: any, res: any) {
         if (typeof res.status === 'function') return res.status(200).json(payload);
         res.statusCode = 200;
         return res.end(JSON.stringify(payload));
+      }
+
+      if (subpath === 'price-finder/search' || subpath === 'price-finder') {
+        const q = req.query?.q as string;
+        const category = req.query?.category as string;
+        const payload = await priceFinderService.search({ q, category });
+        if (typeof res.status === 'function') return res.status(200).json(payload);
+        res.statusCode = 200;
+        return res.end(JSON.stringify(payload));
+      }
+
+      if (subpath === 'price-finder/suggestions') {
+        const payload = priceFinderService.getSearchSuggestions();
+        if (typeof res.status === 'function') return res.status(200).json(payload);
+        res.statusCode = 200;
+        return res.end(JSON.stringify(payload));
+      }
+
+      if (subpath.startsWith('price-finder/product/')) {
+        const prodId = subpath.replace('price-finder/product/', '');
+        const product = priceFinderService.getProductById(prodId);
+        if (product) {
+          if (typeof res.status === 'function') return res.status(200).json(product);
+          res.statusCode = 200;
+          return res.end(JSON.stringify(product));
+        }
       }
 
       if (subpath.startsWith('deals/')) {

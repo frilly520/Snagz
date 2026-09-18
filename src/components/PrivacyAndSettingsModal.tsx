@@ -7,28 +7,38 @@ import {
   Bell, 
   Trash2, 
   Check, 
-  EyeOff, 
   Smartphone,
-  Sparkles,
-  RefreshCw
+  Sliders,
+  EyeOff,
+  Sparkles
 } from 'lucide-react';
 import { UserPrivacySettings, SupportedCurrency } from '../types';
 import { api } from '../services/api';
 import { SnagzLogo } from './SnagzLogo';
+import { HiddenDealsManager } from './HiddenDealsManager';
+import { hiddenDealsManager } from '../services/hiddenDealsManager';
 
 interface PrivacyAndSettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   currency: SupportedCurrency;
   onCurrencyChange: (currency: SupportedCurrency) => void;
+  initialTab?: 'settings' | 'hidden';
+  onDealRestored?: (dealId: string) => void;
+  onAllRestored?: () => void;
 }
 
 export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = ({
   isOpen,
   onClose,
   currency,
-  onCurrencyChange
+  onCurrencyChange,
+  initialTab = 'settings',
+  onDealRestored,
+  onAllRestored
 }) => {
+  const [activeTab, setActiveTab] = useState<'settings' | 'hidden'>(initialTab);
+  const [hiddenCount, setHiddenCount] = useState<number>(0);
   const [settings, setSettings] = useState<UserPrivacySettings>({
     allowPersonalization: true,
     allowLocationDeals: true,
@@ -40,10 +50,18 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [aiStatus, setAiStatus] = useState<{ configured: boolean; mode: string; keyProtection: string; status: string } | null>(null);
+
+  useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab, isOpen]);
 
   useEffect(() => {
     if (isOpen) {
+      setHiddenCount(hiddenDealsManager.getHiddenDeals().length);
+      const unsub = hiddenDealsManager.subscribe(() => {
+        setHiddenCount(hiddenDealsManager.getHiddenDeals().length);
+      });
+
       api.getPrivacySettings()
         .then((res) => {
           if (res.settings) setSettings(res.settings);
@@ -51,11 +69,7 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
         })
         .catch(console.error);
 
-      api.getAiStatus()
-        .then((res) => {
-          if (res) setAiStatus(res);
-        })
-        .catch(console.error);
+      return () => unsub();
     }
   }, [isOpen]);
 
@@ -125,18 +139,71 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
         </button>
 
         {/* Header */}
-        <div className="flex items-center gap-2.5 mb-5 pb-4 border-b border-[#222b3e]">
+        <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-[#222b3e]">
           <div className="p-2 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/30">
             <Shield className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-white">Privacy, Currency & Settings</h2>
-            <p className="text-xs text-neutral-400">User control, zero-tracking transparency, and localization</p>
+            <h2 className="text-base font-bold text-white">Settings & Preferences</h2>
+            <p className="text-xs text-neutral-400">Manage hidden deals, currency, and privacy controls</p>
           </div>
         </div>
 
-        {/* Currency Switcher */}
-        <div className="mb-5 p-3.5 rounded-xl bg-[#0b0e17] border border-[#222b3e]">
+        {/* Tab Switcher */}
+        <div className="flex items-center gap-2 mb-5 p-1 rounded-xl bg-[#0b0e17] border border-[#222b3e]">
+          <button
+            type="button"
+            onClick={() => setActiveTab('settings')}
+            className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+              activeTab === 'settings'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Sliders className="w-3.5 h-3.5" />
+            <span>Preferences & Privacy</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('hidden')}
+            className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+              activeTab === 'hidden'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <EyeOff className="w-3.5 h-3.5" />
+            <span>Hidden Deals</span>
+            {hiddenCount > 0 && (
+              <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+                activeTab === 'hidden' ? 'bg-white/20 text-white' : 'bg-blue-600/30 text-blue-300'
+              }`}>
+                {hiddenCount}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {activeTab === 'hidden' ? (
+          <div className="py-1">
+            <HiddenDealsManager 
+              onDealRestored={onDealRestored}
+              onAllRestored={onAllRestored}
+            />
+            <div className="mt-6 pt-3 border-t border-[#222b3e] flex justify-end">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 rounded-xl bg-[#141926] hover:bg-[#1f273b] text-white font-semibold text-xs transition-colors"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Currency Switcher */}
+            <div className="mb-5 p-3.5 rounded-xl bg-[#0b0e17] border border-[#222b3e]">
           <label className="block text-xs font-bold text-neutral-200 mb-2 flex items-center gap-1.5">
             <Globe className="w-4 h-4 text-blue-400" />
             <span>Display Currency</span>
@@ -269,44 +336,6 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
           )}
         </div>
 
-        {/* AI & API Key Protection Status Card */}
-        <div className="mb-5 p-4 rounded-xl bg-[#0b0e17] border border-[#222b3e] space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-blue-400" />
-              <span className="text-xs font-bold text-white">AI Deal Engine & API Key Security</span>
-            </div>
-            <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 font-mono">
-              <Check className="w-3 h-3 text-blue-400" />
-              SERVER-SIDE PROTECTED
-            </span>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-xs">
-            <div className="p-2.5 rounded-lg bg-[#141926] border border-[#222b3e]/80">
-              <div className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">Client Privacy</div>
-              <div className="text-neutral-200 font-bold mt-0.5 flex items-center gap-1.5">
-                <EyeOff className="w-3.5 h-3.5 text-blue-400" />
-                <span>Zero Browser Exposure</span>
-              </div>
-              <p className="text-[10px] text-neutral-400 mt-1 leading-snug">
-                Keys remain isolated on the Express backend container. Visitors cannot view or inspect credentials.
-              </p>
-            </div>
-
-            <div className="p-2.5 rounded-lg bg-[#141926] border border-[#222b3e]/80">
-              <div className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">Engine Status</div>
-              <div className="text-neutral-200 font-bold mt-0.5 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-                <span>{aiStatus?.configured ? 'Active Gemini Model' : 'Active Server Intelligence'}</span>
-              </div>
-              <p className="text-[10px] text-neutral-400 mt-1 leading-snug">
-                {aiStatus?.status || 'All queries routed via backend proxy'}
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* About SNAGZ Section */}
         <div className="mb-5 p-4 rounded-xl bg-[#0b0e17] border border-[#222b3e] flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -360,6 +389,8 @@ export const PrivacyAndSettingsModal: React.FC<PrivacyAndSettingsModalProps> = (
             )}
           </button>
         </div>
+        </>
+        )}
       </div>
     </div>
   );
