@@ -25,6 +25,7 @@ import {
 import { legitimatePromoCodes } from './promoCodesData';
 import { comprehensiveStores, sampleStoreLocations, sampleLoyaltyPrograms } from './retailerDatabase';
 import { CVSAdapter, WalmartAdapter, WalgreensAdapter, KrogerAdapter, HomeDepotAdapter, AutoZoneAdapter, DollarGeneralAdapter, CostcoAdapter, AldiAdapter } from './retailerAdapters';
+import { krazyCouponLadyDeals } from './couponingSeedData';
 
 // Initial Seed Stores
 export const initialStores: Store[] = [
@@ -200,6 +201,7 @@ export const initialStores: Store[] = [
 
 // Seed Deals with comprehensive verification, expiration, stacking, best deal rankings, why not free audits, channels
 export const initialDeals: Deal[] = [
+  ...krazyCouponLadyDeals,
   // 1. BEST DEAL #1 FEATURE: Wireless Noise-Cancelling Headphones / AirPods Pro / Sony
   {
     id: 'deal-wireless-headphones-best-deal',

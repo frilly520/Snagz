@@ -1,6 +1,8 @@
 import { Deal, Store } from "../types";
+import { krazyCouponLadyDeals } from "../../server/couponingSeedData";
 
 export const FALLBACK_DEALS: Deal[] = [
+  ...krazyCouponLadyDeals,
   {
     "id": "deal-wireless-headphones-best-deal",
     "title": "Sony WH-1000XM5 Wireless Noise-Canceling Headphones",

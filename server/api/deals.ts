@@ -1,9 +1,10 @@
-import { db } from '../server/db';
-import { pennyService } from '../server/pennyService';
+import { db } from '../db';
+import { pennyService } from '../pennyService';
+import { feedManager } from '../collectors/feedManager';
 
 // Vercel Serverless Function: GET /api/deals
 // Direct file-based route on Vercel handling all deal queries, search, and sorting.
-export default function handler(req: any, res: any) {
+export default async function handler(req: any, res: any) {
   // CORS & Security Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -17,6 +18,9 @@ export default function handler(req: any, res: any) {
   }
 
   try {
+    // Stale-While-Revalidate: trigger feedManager.ensureFreshData() if last ingestion > 30 mins
+    await feedManager.ensureFreshData(30 * 60 * 1000);
+
     // Parse query parameters from req.query (Vercel) or fallback to req.url
     const rawUrl = req.url || '';
     const parsedUrl = new URL(rawUrl.startsWith('http') ? rawUrl : `http://localhost${rawUrl.startsWith('/') ? rawUrl : '/' + rawUrl}`);
@@ -28,6 +32,24 @@ export default function handler(req: any, res: any) {
       const val = parsedUrl.searchParams.get(key);
       return val !== null ? val : undefined;
     };
+
+    // Single Deal by ID lookup
+    const singleId = getParam('id') || (!parsedUrl.pathname.endsWith('/deals') && !parsedUrl.pathname.endsWith('/deals/') ? parsedUrl.pathname.replace(/^\/api\/deals\/?/, '').trim() : undefined);
+    if (singleId) {
+      const deal = db.deals.find(d => d.id === singleId);
+      if (!deal) {
+        if (typeof res.status === 'function' && typeof res.json === 'function') {
+          return res.status(404).json({ error: 'Deal not found' });
+        }
+        res.statusCode = 404;
+        return res.end(JSON.stringify({ error: 'Deal not found' }));
+      }
+      if (typeof res.status === 'function' && typeof res.json === 'function') {
+        return res.status(200).json(deal);
+      }
+      res.statusCode = 200;
+      return res.end(JSON.stringify(deal));
+    }
 
     const q = (getParam('q') || '').toLowerCase().trim();
     const category = getParam('category');

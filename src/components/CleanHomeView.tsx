@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { Deal, Store, SupportedCurrency } from '../types';
 import { CouponCard } from './CouponCard';
+import { LiveCouponRadar } from './LiveCouponRadar';
 
 interface CleanHomeViewProps {
   deals: Deal[];
@@ -27,6 +28,7 @@ interface CleanHomeViewProps {
   onTriggerConfirmation?: (deal: Deal) => void;
   onNavigateTab: (tab: any, query?: string) => void;
   onSelectStore: (storeName: string) => void;
+  onDealsUpdated?: (freshDeals: Deal[]) => void;
 }
 
 const FEATURED_STORE_NAMES = [
@@ -64,7 +66,8 @@ export const CleanHomeView: React.FC<CleanHomeViewProps> = ({
   onReportDeal,
   onTriggerConfirmation,
   onNavigateTab,
-  onSelectStore
+  onSelectStore,
+  onDealsUpdated
 }) => {
   const [quickPriceQuery, setQuickPriceQuery] = useState('');
 
@@ -106,7 +109,12 @@ export const CleanHomeView: React.FC<CleanHomeViewProps> = ({
         </p>
       </section>
 
-      {/* 2. 🔥 BEST SNAGS (3-4 Top Featured Deals) */}
+      {/* 2. ⚡ LIVE COUPON RADAR (Real-Time Krazy Coupon Lady & Koupons.ai Stacks) */}
+      <section>
+        <LiveCouponRadar onDealsUpdated={onDealsUpdated || (() => {})} />
+      </section>
+
+      {/* 3. 🔥 BEST SNAGS (3-4 Top Featured Deals) */}
       <section>
         <div className="flex items-center justify-between mb-5 pb-2 border-b border-[#1c2438]">
           <div className="flex items-center gap-2.5">

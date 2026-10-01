@@ -50,7 +50,10 @@ export type DealType =
   | 'LOYALTY_OFFER'
   | 'EXTRABUCKS'
   | 'REWARD_POINTS'
-  | 'PRICE_MATCH';
+  | 'PRICE_MATCH'
+  | 'coupon_stack'
+  | 'COUPON_STACK'
+  | 'MONEY_MAKER';
 
 export type RetailerCategory =
   | 'GROCERY'
@@ -66,7 +69,7 @@ export type RetailerCategory =
   | 'PET'
   | 'GAS / CONVENIENCE';
 
-export type ShoppingChannel = 'ONLINE' | 'IN_STORE' | 'ONLINE_AND_IN_STORE';
+export type ShoppingChannel = 'ONLINE' | 'IN_STORE' | 'ONLINE_AND_IN_STORE' | 'IN_STORE_ONLY' | 'ONLINE_ONLY';
 
 export type SupportedCurrency = 'USD' | 'CAD' | 'GBP' | 'EUR';
 

@@ -1,4 +1,4 @@
-import { db } from '../server/db';
+import { db } from '../db';
 
 export default function handler(req: any, res: any) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -15,6 +15,23 @@ export default function handler(req: any, res: any) {
   try {
     const rawUrl = req.url || '';
     const parsedUrl = new URL(rawUrl.startsWith('http') ? rawUrl : `http://localhost${rawUrl.startsWith('/') ? rawUrl : '/' + rawUrl}`);
+    const id = (req.query?.id as string) || parsedUrl.searchParams.get('id') || (!parsedUrl.pathname.endsWith('/stores') && !parsedUrl.pathname.endsWith('/stores/') ? parsedUrl.pathname.replace(/^\/api\/stores\/?/, '').trim() : undefined);
+
+    if (id) {
+      const store = db.stores.find(s => s.id === id || s.slug === id || s.name.toLowerCase() === id.toLowerCase());
+      if (!store) {
+        res.statusCode = 404;
+        return res.end(JSON.stringify({ error: 'Store not found' }));
+      }
+      const storeDeals = db.deals.filter(d => d.storeId === store.id);
+      const payload = { store, deals: storeDeals };
+      if (typeof res.status === 'function' && typeof res.json === 'function') {
+        return res.status(200).json(payload);
+      }
+      res.statusCode = 200;
+      return res.end(JSON.stringify(payload));
+    }
+
     const category = req.query?.category || parsedUrl.searchParams.get('category');
 
     let stores = db.stores;

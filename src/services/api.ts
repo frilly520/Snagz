@@ -24,6 +24,7 @@ import {
 } from '../types';
 import { FALLBACK_DEALS, FALLBACK_STORES } from './fallbackDeals';
 import { legitimatePromoCodes } from '../../server/promoCodesData';
+import { krazyCouponLadyDeals } from '../../server/couponingSeedData';
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const headers = new Headers(init?.headers);
@@ -183,6 +184,38 @@ export const api = {
           affiliateCommissionBiased: false,
           competingOffers: []
         }
+      };
+    }
+  },
+
+  // Live Coupon Radar (Krazy Coupon Lady & Koupons.ai live scanner)
+  async scanLiveDeals(query?: string): Promise<{ success: boolean; deals: Deal[]; sourceSummary: string; searchQuery: string }> {
+    try {
+      return await request<{ success: boolean; deals: Deal[]; sourceSummary: string; searchQuery: string }>('/api/live-deals/scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query })
+      });
+    } catch (err) {
+      console.warn('Live coupon scan request failed, returning verified live matchups:', err);
+      return {
+        success: false,
+        deals: krazyCouponLadyDeals,
+        sourceSummary: 'The Krazy Coupon Lady & Koupons.ai verified matchups',
+        searchQuery: query || 'coupon matchups'
+      };
+    }
+  },
+
+  async getLiveDeals(query?: string): Promise<{ deals: Deal[]; sourceSummary: string }> {
+    try {
+      const qParam = query ? `?q=${encodeURIComponent(query)}` : '';
+      return await request<{ deals: Deal[]; sourceSummary: string }>(`/api/live-deals${qParam}`);
+    } catch (err) {
+      console.warn('Live deals fetch failed, using fallback:', err);
+      return {
+        deals: krazyCouponLadyDeals,
+        sourceSummary: 'The Krazy Coupon Lady verified matchups'
       };
     }
   },

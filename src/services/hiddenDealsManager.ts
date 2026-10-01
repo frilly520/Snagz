@@ -14,6 +14,7 @@ class HiddenDealsManager {
 
   private loadFromStorage() {
     try {
+      if (typeof window === 'undefined' || typeof localStorage === 'undefined') return;
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed: HiddenDealItem[] = JSON.parse(raw);
@@ -33,6 +34,7 @@ class HiddenDealsManager {
 
   private saveToStorage() {
     try {
+      if (typeof window === 'undefined' || typeof localStorage === 'undefined') return;
       const items = Array.from(this.hiddenMap.values());
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
     } catch (e) {

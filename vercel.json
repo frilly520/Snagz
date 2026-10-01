@@ -1,7 +1,48 @@
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "crons": [
+    {
+      "path": "/api/admin/pipeline/trigger",
+      "schedule": "0 * * * *"
+    }
+  ],
   "rewrites": [
     {
-      "source": "/((?!api/).*)",
+      "source": "/api/deals/:id",
+      "destination": "/api/deals?id=:id"
+    },
+    {
+      "source": "/api/stores/:id",
+      "destination": "/api/stores?id=:id"
+    },
+    {
+      "source": "/api/promo-codes/:id",
+      "destination": "/api/promo-codes?id=:id"
+    },
+    {
+      "source": "/api/penny/:id",
+      "destination": "/api/penny?id=:id"
+    },
+    {
+      "source": "/api/price-finder/:path*",
+      "destination": "/api/[...path]?path=price-finder/:path*"
+    },
+    {
+      "source": "/api/user/:path*",
+      "destination": "/api/[...path]?path=user/:path*"
+    },
+    {
+      "source": "/api/admin/:path*",
+      "destination": "/api/[...path]?path=admin/:path*"
+    },
+    {
+      "source": "/api/alerts/:path*",
+      "destination": "/api/[...path]?path=alerts/:path*"
+    },
+    {
+      "source": "/((?!api/.*).*)",
       "destination": "/index.html"
     }
   ]

@@ -60,6 +60,7 @@ import { SnagzSplashScreen, SnagzLoadingState } from './components/SnagzSplashSc
 import { PennyListView } from './components/PennyListView';
 import { PriceFinderView } from './components/PriceFinderView';
 import { hiddenDealsManager } from './services/hiddenDealsManager';
+import { testFirestoreConnection, isFirebaseConfigured } from './services/firebase';
 
 export type AppNavTab = 'home' | 'deals' | 'stores' | 'promocodes' | 'pricefinder' | 'free' | 'saved' | 'penny' | 'savings' | 'admin';
 
@@ -180,6 +181,10 @@ export function App() {
 
   const loadInitialData = async () => {
     try {
+      if (isFirebaseConfigured) {
+        testFirestoreConnection().catch(e => console.info('[Firebase] Notice:', e));
+      }
+
       const results = await Promise.allSettled([
         api.getStores(),
         api.getCategories(),
@@ -496,6 +501,12 @@ export function App() {
               setSearchQuery(storeName);
               setActiveTab('deals');
             }}
+            onDealsUpdated={(freshDeals) => {
+              setDeals(prev => {
+                const freshIds = new Set(freshDeals.map(f => f.id));
+                return [...freshDeals, ...prev.filter(p => !freshIds.has(p.id))];
+              });
+            }}
           />
         )}
 
@@ -554,6 +565,38 @@ export function App() {
                 }`}
               >
                 💰 Money Makers
+              </button>
+
+              <button
+                type="button"
+                onClick={() => { 
+                  setSearchQuery(searchQuery === 'Krazy Coupon Lady' ? '' : 'Krazy Coupon Lady');
+                  setMoneyMakerOnly(false);
+                  setFreeOnly(false);
+                }}
+                className={`px-3.5 py-1.5 rounded-xl border text-xs font-bold transition shrink-0 ${
+                  searchQuery.toLowerCase().includes('krazy')
+                    ? 'bg-purple-600 text-white border-purple-500 shadow-sm' 
+                    : 'bg-[#121624] hover:bg-[#182138] border-[#222b3e] text-neutral-300'
+                }`}
+              >
+                🏷️ Krazy Coupon Lady
+              </button>
+
+              <button
+                type="button"
+                onClick={() => { 
+                  setSearchQuery(searchQuery === 'Koupons.ai' ? '' : 'Koupons.ai');
+                  setMoneyMakerOnly(false);
+                  setFreeOnly(false);
+                }}
+                className={`px-3.5 py-1.5 rounded-xl border text-xs font-bold transition shrink-0 ${
+                  searchQuery.toLowerCase().includes('koupons')
+                    ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm' 
+                    : 'bg-[#121624] hover:bg-[#182138] border-[#222b3e] text-neutral-300'
+                }`}
+              >
+                ⚡ Koupons.ai Codes
               </button>
             </div>
 

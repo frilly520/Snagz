@@ -1,7 +1,8 @@
-import app from '../server/app';
-import { db } from '../server/db';
-import { pennyService } from '../server/pennyService';
-import { priceFinderService } from '../server/priceFinderService';
+import app from '../app';
+import { db } from '../db';
+import { pennyService } from '../pennyService';
+import { priceFinderService } from '../priceFinderService';
+import { feedManager } from '../collectors/feedManager';
 
 // Vercel Serverless Function: Catch-all for all /api/* routes
 export default async function handler(req: any, res: any) {
@@ -18,6 +19,9 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
+    // Stale-While-Revalidate: trigger feedManager.ensureFreshData() if last ingestion > 30 mins
+    await feedManager.ensureFreshData(30 * 60 * 1000);
+
     // Reconstruct canonical subpath whether on Vercel or Node
     let subpath = '';
     if (req.query?.path) {
@@ -81,6 +85,27 @@ export default async function handler(req: any, res: any) {
           count: (db.promoCodes || []).length,
           promoCodes: db.promoCodes || [],
           stores
+        };
+        if (typeof res.status === 'function') return res.status(200).json(payload);
+        res.statusCode = 200;
+        return res.end(JSON.stringify(payload));
+      }
+
+      if (subpath === 'admin/pipeline/trigger') {
+        const summary = await feedManager.runIngestion();
+        const payload = { success: true, message: 'Automated free deals & coupons collection completed', summary };
+        if (typeof res.status === 'function') return res.status(200).json(payload);
+        res.statusCode = 200;
+        return res.end(JSON.stringify(payload));
+      }
+
+      if (subpath === 'admin/pipeline/status') {
+        const payload = {
+          status: 'active',
+          schedulerIntervalMinutes: 30,
+          lastRun: feedManager.getLastRunSummary(),
+          inMemoryDealsCount: db.deals.length,
+          inMemoryCouponsCount: db.promoCodes.length
         };
         if (typeof res.status === 'function') return res.status(200).json(payload);
         res.statusCode = 200;

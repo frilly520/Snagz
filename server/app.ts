@@ -5,6 +5,10 @@ import { pennyService } from './pennyService';
 import { priceFinderService } from './priceFinderService';
 import { translateSearchIntent, askDealAssistant, analyzeReceipt } from './ai';
 import { runIngestionPipeline } from './pipeline';
+import { testConnection } from './dbClient';
+import { metricsRepository } from './repositories';
+import { liveCouponService } from './liveCouponService';
+import { feedManager } from './collectors/feedManager';
 import { Deal, StackingBreakdown, UserList, DealAlert, ProductWatchlistItem, UserReport, SavingsLogItem } from '../src/types';
 
 dotenv.config();
@@ -55,8 +59,9 @@ app.use((req, res, next) => {
 // -------------------------------------------------------------
 
 // Health check (Works at both /api/health and /health)
-const healthHandler = (req: express.Request, res: express.Response) => {
+const healthHandler = async (req: express.Request, res: express.Response) => {
   const pennyHealth = pennyService.getHealth ? pennyService.getHealth() : null;
+  const dbStatus = await testConnection();
   res.json({
     status: 'ok',
     deployment: process.env.VERCEL ? 'Vercel Serverless Function' : 'Node.js Container / Dev Server',
@@ -66,6 +71,12 @@ const healthHandler = (req: express.Request, res: express.Response) => {
     totalStores: db.stores.length,
     pennyItemsCount: pennyHealth?.currentItemCount || 0,
     aiConfigured: !!process.env.GEMINI_API_KEY,
+    database: {
+      isConfigured: dbStatus.isConfigured,
+      isConnected: dbStatus.isConnected,
+      connectionType: dbStatus.connectionType,
+      error: dbStatus.error
+    },
     serverVersion: '1.2.0'
   });
 };
@@ -86,6 +97,57 @@ app.get('/api/ai/status', (req, res) => {
     keyConfigured: hasKey,
     maskedKey: hasKey && key && key.length > 8 ? `${key.substring(0, 4)}...${key.substring(key.length - 4)}` : null
   });
+});
+
+// -------------------------------------------------------------
+// LIVE COUPON RADAR (Krazy Coupon Lady & Koupons.ai Real-Time Data)
+// -------------------------------------------------------------
+
+// POST /api/live-deals/scan
+app.post('/api/live-deals/scan', async (req, res) => {
+  try {
+    const { query } = req.body || {};
+    const searchQuery = query || 'hottest coupon matchups Krazy Coupon Lady Koupons.ai moneymakers';
+    const result = await liveCouponService.fetchLiveDeals(searchQuery);
+
+    if (result.deals && result.deals.length > 0) {
+      const existingIds = new Set(db.deals.map(d => d.id));
+      const freshDeals = result.deals.filter(d => !existingIds.has(d.id));
+      db.deals = [...freshDeals, ...db.deals];
+    }
+
+    res.json({
+      success: true,
+      deals: result.deals,
+      sourceSummary: result.sourceSummary,
+      searchQuery: result.searchQuery,
+      timestamp: result.timestamp,
+      totalDealsInDb: db.deals.length
+    });
+  } catch (err: any) {
+    console.error('[SNAGZ API ERROR] /api/live-deals/scan:', err);
+    res.status(500).json({ error: err.message || 'Failed to scan live deals' });
+  }
+});
+
+// GET /api/live-deals
+app.get('/api/live-deals', async (req, res) => {
+  try {
+    const { q } = req.query as Record<string, string>;
+    const searchQuery = q || 'top coupon matchups this week Krazy Coupon Lady';
+    const result = await liveCouponService.fetchLiveDeals(searchQuery);
+
+    if (result.deals && result.deals.length > 0) {
+      const existingIds = new Set(db.deals.map(d => d.id));
+      const freshDeals = result.deals.filter(d => !existingIds.has(d.id));
+      db.deals = [...freshDeals, ...db.deals];
+    }
+
+    res.json(result);
+  } catch (err: any) {
+    console.error('[SNAGZ API ERROR] /api/live-deals:', err);
+    res.status(500).json({ error: err.message || 'Failed to fetch live deals' });
+  }
 });
 
 // -------------------------------------------------------------
@@ -280,8 +342,11 @@ function pennyItemToDeal(p: any): Deal {
 }
 
 // GET /api/deals
-app.get('/api/deals', (req, res) => {
+app.get('/api/deals', async (req, res) => {
   try {
+    // Stale-While-Revalidate: trigger feedManager.ensureFreshData() if last ingestion > 30 mins
+    await feedManager.ensureFreshData(30 * 60 * 1000);
+
     const {
       q,
       category,
@@ -854,7 +919,10 @@ app.get('/api/categories', (req, res) => {
 // -------------------------------------------------------------
 // VERIFIED PROMO CODES API
 // -------------------------------------------------------------
-app.get('/api/promo-codes', (req, res) => {
+app.get('/api/promo-codes', async (req, res) => {
+  // Stale-While-Revalidate: trigger feedManager.ensureFreshData() if last ingestion > 30 mins
+  await feedManager.ensureFreshData(30 * 60 * 1000);
+
   const q = (req.query.q as string || '').toLowerCase().trim();
   const store = (req.query.store as string || '').toLowerCase().trim();
   const filter = (req.query.filter as string || 'All').trim();
@@ -1335,11 +1403,20 @@ app.delete('/api/user/alerts/:id', (req, res) => {
 });
 
 // Admin Metrics & Dashboard
-app.get('/api/admin/metrics', (req, res) => {
-  res.json({
-    metrics: db.getMetrics(),
-    recentRuns: db.pipelineRunHistory
-  });
+app.get('/api/admin/metrics', async (req, res) => {
+  try {
+    const metrics = await metricsRepository.getMetrics();
+    res.json({
+      metrics,
+      recentRuns: db.pipelineRunHistory
+    });
+  } catch (err: any) {
+    console.error('[SNAGZ API ERROR] /api/admin/metrics:', err);
+    res.json({
+      metrics: db.getMetrics(),
+      recentRuns: db.pipelineRunHistory
+    });
+  }
 });
 
 app.get('/api/admin/reports', (req, res) => {
@@ -1353,14 +1430,35 @@ app.post('/api/admin/reports/:id/resolve', (req, res) => {
   res.json(report);
 });
 
-app.post('/api/admin/pipeline/trigger', async (req, res) => {
+// Automated Deal & Coupon Feed Ingestion Trigger (Supported via POST and GET for Vercel Cron / Webhook)
+const handlePipelineTrigger = async (req: express.Request, res: express.Response) => {
   try {
-    const result = await runIngestionPipeline();
-    res.json({ success: true, result });
+    const summary = await feedManager.runIngestion();
+    res.json({
+      success: true,
+      message: 'Automated free deals & coupons collection completed',
+      summary
+    });
   } catch (err: any) {
     console.error('[SNAGZ API ERROR] /api/admin/pipeline/trigger:', err);
     res.status(500).json({ error: err.message || 'Pipeline trigger failed' });
   }
+};
+
+app.post('/api/admin/pipeline/trigger', handlePipelineTrigger);
+app.get('/api/admin/pipeline/trigger', handlePipelineTrigger);
+
+// Status of automated background collection
+app.get('/api/admin/pipeline/status', async (req, res) => {
+  const dbStatus = await testConnection();
+  res.json({
+    status: 'active',
+    schedulerIntervalMinutes: 30,
+    lastRun: feedManager.getLastRunSummary(),
+    database: dbStatus,
+    inMemoryDealsCount: db.deals.length,
+    inMemoryCouponsCount: db.promoCodes.length
+  });
 });
 
 app.post('/api/admin/deals/:id/moderate', (req, res) => {
@@ -1378,6 +1476,15 @@ app.post('/api/admin/deals/:id/moderate', (req, res) => {
   if (score) deal.dealScore = score;
 
   res.json({ success: true, deal });
+});
+
+// Catch-all for unmatched API routes to ensure JSON 404 instead of falling through to SPA HTML
+app.all('/api/*', (req, res) => {
+  res.status(404).json({
+    error: 'API endpoint not found',
+    path: req.originalUrl || req.url,
+    method: req.method
+  });
 });
 
 // Global error handler ensuring all API errors return JSON and log stack traces for Vercel logs
