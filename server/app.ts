@@ -1478,6 +1478,51 @@ app.post('/api/admin/deals/:id/moderate', (req, res) => {
   res.json({ success: true, deal });
 });
 
+// RetailerAPI product lookup (server-side; API key never reaches the browser)
+app.get('/api/retailerapi/lookup', async (req, res) => {
+  const identifier = String(req.query.identifier || '').trim();
+  if (!/^[a-zA-Z0-9-]{4,40}$/.test(identifier)) {
+    return res.status(400).json({ error: 'Provide a valid product identifier (UPC, GTIN, ASIN, or retailer item ID).' });
+  }
+
+  const apiKey = process.env.RETAILERAPI_KEY;
+  if (!apiKey) {
+    return res.status(503).json({ error: 'RetailerAPI is not configured on the server.' });
+  }
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    let response: Response;
+    try {
+      response = await fetch(`https://api.retailerapi.com/v1/products/${encodeURIComponent(identifier)}?include_cross_retailer=true`, {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${apiKey}`, Accept: 'application/json' },
+        signal: controller.signal
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    const body = await response.json().catch(() => null);
+    if (!response.ok) {
+      console.error('[RetailerAPI] Lookup failed:', response.status);
+      return res.status(response.status === 404 ? 404 : 502).json({
+        error: response.status === 404 ? 'Product not found.' : 'RetailerAPI lookup failed.',
+        providerStatus: response.status
+      });
+    }
+
+    res.setHeader('Cache-Control', 'no-store');
+    return res.json({ success: true, identifier, source: 'RetailerAPI', data: body });
+  } catch (err: any) {
+    console.error('[RetailerAPI] Lookup error:', err?.name || 'Error');
+    return res.status(502).json({
+      error: err?.name === 'AbortError' ? 'RetailerAPI request timed out.' : 'Unable to reach RetailerAPI.'
+    });
+  }
+});
+
 // Catch-all for unmatched API routes to ensure JSON 404 instead of falling through to SPA HTML
 app.all('/api/*', (req, res) => {
   res.status(404).json({
