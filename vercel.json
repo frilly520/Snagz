@@ -42,6 +42,10 @@
       "destination": "/api/[...path]?path=alerts/:path*"
     },
     {
+      "source": "/api/retailerapi/:path*",
+      "destination": "/api/[...path]?path=retailerapi/:path*"
+    },
+    {
       "source": "/((?!api/.*).*)",
       "destination": "/index.html"
     }
